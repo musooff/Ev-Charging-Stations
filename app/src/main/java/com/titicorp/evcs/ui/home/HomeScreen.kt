@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -51,11 +52,12 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.titicorp.evcs.R
+import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Filter
 import com.titicorp.evcs.model.Station
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -89,7 +91,9 @@ fun HomeScreen() {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp),
             stations = stations,
-        )
+        ) {
+            navController.navigate(Screen.Station.route)
+        }
     }
 
 
@@ -182,6 +186,7 @@ private fun FilterItem(
 private fun StationLayout(
     modifier: Modifier = Modifier,
     stations: List<Station>,
+    onItemClick: (Station) -> Unit,
 ) {
     LazyRow(
         modifier = modifier,
@@ -189,7 +194,9 @@ private fun StationLayout(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(stations) {
-            StationItem(Station.Sample)
+            StationItem(station = Station.Sample) {
+                onItemClick(it)
+            }
         }
     }
 }
@@ -197,6 +204,7 @@ private fun StationLayout(
 @Composable
 private fun StationItem(
     station: Station,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -269,7 +277,7 @@ private fun StationItem(
             }
             IconButton(
                 modifier = Modifier,
-                onClick = { /*TODO*/ },
+                onClick = onClick,
                 colors = IconButtonDefaults.filledIconButtonColors(),
             ) {
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)

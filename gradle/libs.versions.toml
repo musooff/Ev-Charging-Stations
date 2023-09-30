@@ -27,6 +27,7 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version = "2.14.0" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version = "18.1.0" }
 constraint-layout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version = "1.0.1" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.7.3" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

@@ -49,11 +49,13 @@ import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import com.titicorp.evcs.R
+import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Station
 
 @Composable
-fun StationScreen(station: Station = Station.Sample) {
+fun StationScreen(navController: NavController, station: Station = Station.Sample) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -66,7 +68,7 @@ fun StationScreen(station: Station = Station.Sample) {
             }
 
             item {
-                ActionLayout()
+                ActionLayout(navController)
             }
 
             item {
@@ -86,17 +88,19 @@ fun StationScreen(station: Station = Station.Sample) {
                 }
             }
         }
-        ToolbarLayout()
+        ToolbarLayout(navController)
     }
 }
 
 @Composable
-private fun ToolbarLayout() {
+private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
             .padding(horizontal = 10.dp)
     ) {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = {
+            navController.navigateUp()
+        }) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
@@ -214,7 +218,7 @@ private fun AppBarLayout(
 }
 
 @Composable
-private fun ActionLayout() {
+private fun ActionLayout(navController: NavController) {
     Row(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp),
@@ -223,14 +227,14 @@ private fun ActionLayout() {
         Button(
             modifier = Modifier
                 .weight(1f),
-            onClick = { /*TODO*/ }
+            onClick = { navController.navigate(Screen.Directions.route) }
         ) {
             Text(text = "Get Directions")
         }
         OutlinedButton(
             modifier = Modifier
                 .weight(1f),
-            onClick = { /*TODO*/ }
+            onClick = { navController.navigate(Screen.Booking.route) }
         ) {
             Text(text = "Book")
         }

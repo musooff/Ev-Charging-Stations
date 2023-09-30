@@ -28,17 +28,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.titicorp.evcs.utils.composables.ScreenTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingScreen() {
+fun BookingScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ToolbarLayout()
+            ToolbarLayout(navController)
             LazyColumn(
                 modifier = Modifier
                     .padding(top = 20.dp),
@@ -85,13 +86,16 @@ fun BookingScreen() {
 }
 
 @Composable
-private fun ToolbarLayout() {
+private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(
+            onClick = {
+                navController.navigateUp()
+            }) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -25,7 +26,7 @@ import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.ScreenTitle
 
 @Composable
-fun DirectionsScreen(station: Station = Station.Sample) {
+fun DirectionsScreen(navController: NavController, station: Station = Station.Sample) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +47,7 @@ fun DirectionsScreen(station: Station = Station.Sample) {
             )
 
         }
-        ToolbarLayout()
+        ToolbarLayout(navController)
         Button(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -59,13 +60,13 @@ fun DirectionsScreen(station: Station = Station.Sample) {
 }
 
 @Composable
-private fun ToolbarLayout() {
+private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { navController.navigateUp() }) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
