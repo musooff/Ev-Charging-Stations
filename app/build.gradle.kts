@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.constraint.layout.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

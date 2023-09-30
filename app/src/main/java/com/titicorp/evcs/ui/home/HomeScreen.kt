@@ -67,47 +67,12 @@ fun HomeScreen() {
             modifier = Modifier
                 .padding(top = 10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-            ) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = null
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null
-                    )
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null
-                    )
-                }
-            }
-            Text(
-                modifier = Modifier
-                    .padding(start = 20.dp, top = 20.dp),
-                text = "Hello",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                modifier = Modifier
-                    .padding(start = 20.dp),
-                text = "Thomas Shelby",
-                style = MaterialTheme.typography.headlineSmall
-            )
+            ToolbarLayout()
+            GreetingLayout()
+
             var currentFilter by remember {
                 mutableStateOf(Filter.Nearby)
             }
-
-
             FilterLayout(
                 modifier = Modifier
                     .padding(top = 20.dp),
@@ -128,6 +93,50 @@ fun HomeScreen() {
     }
 
 
+}
+
+@Composable
+private fun ToolbarLayout() {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 10.dp)
+    ) {
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = null
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null
+            )
+        }
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun GreetingLayout() {
+    Text(
+        modifier = Modifier
+            .padding(start = 20.dp, top = 20.dp),
+        text = "Hello",
+        style = MaterialTheme.typography.bodySmall
+    )
+    Text(
+        modifier = Modifier
+            .padding(start = 20.dp),
+        text = "Thomas Shelby",
+        style = MaterialTheme.typography.headlineSmall
+    )
 }
 
 @Composable
@@ -201,7 +210,7 @@ private fun StationItem(
                 .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth()
                 .height(80.dp)
-                .background(Color.Yellow),
+                .background(MaterialTheme.colorScheme.secondaryContainer),
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentScale = ContentScale.Crop,
             contentDescription = null
@@ -286,13 +295,13 @@ private fun MapLayout(stations: List<Station>) {
                 .fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
-            repeat(stations.size) {index ->
+            repeat(stations.size) { index ->
                 Marker(
                     state = MarkerState(position = LatLng(stations[index].lat, stations[index].lng)),
                     title = first.title,
                     snippet = first.address,
                     onClick = {
-                              return@Marker false
+                        return@Marker false
                     },
                 )
             }
