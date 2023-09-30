@@ -55,7 +55,7 @@ import com.titicorp.evcs.model.Station
 @Composable
 fun StationScreen(station: Station = Station.Sample) {
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
     ) {
         var currentTab by remember {
             mutableStateOf(Tab.Info)
@@ -87,7 +87,6 @@ fun StationScreen(station: Station = Station.Sample) {
             }
         }
         ToolbarLayout()
-
     }
 }
 
