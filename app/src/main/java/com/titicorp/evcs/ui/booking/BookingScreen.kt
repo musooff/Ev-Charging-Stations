@@ -36,14 +36,14 @@ import com.titicorp.evcs.utils.composables.ScreenTitle
 fun BookingScreen(navController: NavController) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             ToolbarLayout(navController)
             LazyColumn(
                 modifier = Modifier
                     .padding(top = 20.dp),
-                contentPadding = PaddingValues(bottom = 50.dp)
+                contentPadding = PaddingValues(bottom = 50.dp),
             ) {
                 item {
                     DatePicker(
@@ -53,7 +53,7 @@ fun BookingScreen(navController: NavController) {
                                 modifier = Modifier
                                     .padding(start = 20.dp),
                                 text = "Select Date",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         },
                         showModeToggle = false,
@@ -64,7 +64,7 @@ fun BookingScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(start = 20.dp),
                         text = "Select Time",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
                 item {
@@ -78,11 +78,11 @@ fun BookingScreen(navController: NavController) {
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            onClick = { /*TODO*/ }) {
+            onClick = { /*TODO*/ },
+        ) {
             Text(text = "Book")
         }
     }
-
 }
 
 @Composable
@@ -95,7 +95,8 @@ private fun ToolbarLayout(navController: NavController) {
         IconButton(
             onClick = {
                 navController.navigateUp()
-            }) {
+            },
+        ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
@@ -123,7 +124,6 @@ private fun TimePickerLayout() {
                 selectedTime = it
             }
         }
-
     }
 }
 
@@ -137,7 +137,7 @@ private fun TimePickerRow(
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         for (time in from..to) {
             TimePickerItem(
@@ -171,7 +171,7 @@ private fun TimePickerItem(
         }
     } else {
         OutlinedButton(
-            onClick = onClick
+            onClick = onClick,
         ) {
             content()
         }

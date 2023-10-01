@@ -18,7 +18,7 @@ data class Station(
             address = "Park Avenue 110",
             lat = 38.574106716422506,
             lng = 68.78535232665297,
-            thumbnail = null
+            thumbnail = null,
         )
         val Nearby = listOf(
             Station(
@@ -26,21 +26,21 @@ data class Station(
                 address = "Park Avenue 110",
                 lat = 38.574106716422506,
                 lng = 68.78535232665297,
-                thumbnail = null
+                thumbnail = null,
             ),
             Station(
                 title = "Second Birmingham Station",
                 address = "Park Avenue 110",
                 lat = 38.578661705786544,
                 lng = 68.78273075220778,
-                thumbnail = null
+                thumbnail = null,
             ),
             Station(
                 title = "Third Birmingham Station",
                 address = "Park Avenue 110",
                 lat = 38.58096931688277,
                 lng = 68.7863539751907,
-                thumbnail = null
+                thumbnail = null,
             ),
 
             Station(
@@ -48,7 +48,7 @@ data class Station(
                 address = "Park Avenue 110",
                 lat = 38.59096931688277,
                 lng = 68.7863539751907,
-                thumbnail = null
+                thumbnail = null,
             ),
         )
 

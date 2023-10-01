@@ -58,7 +58,7 @@ import com.titicorp.evcs.model.Station
 fun StationScreen(navController: NavController, stationId: String) {
     val station = Station.byId(stationId)
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         var currentTab by remember {
             mutableStateOf(Tab.Info)
@@ -97,7 +97,7 @@ fun StationScreen(navController: NavController, stationId: String) {
 private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
-            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
         IconButton(onClick = {
             navController.navigateUp()
@@ -125,12 +125,12 @@ private fun ToolbarLayout(navController: NavController) {
 
 @Composable
 private fun AppBarLayout(
-    station: Station
+    station: Station,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(300.dp),
     ) {
         Image(
             modifier = Modifier
@@ -138,7 +138,7 @@ private fun AppBarLayout(
                 .background(MaterialTheme.colorScheme.secondaryContainer),
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentScale = ContentScale.Crop,
-            contentDescription = null
+            contentDescription = null,
         )
         Box(
             modifier = Modifier
@@ -148,8 +148,8 @@ private fun AppBarLayout(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
-                    )
-                )
+                    ),
+                ),
         )
     }
     Row(
@@ -162,11 +162,11 @@ private fun AppBarLayout(
         ) {
             Text(
                 text = station.title,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
             )
             Text(
                 text = station.address,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Row(
@@ -177,13 +177,13 @@ private fun AppBarLayout(
                     .size(15.dp),
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
-                tint = Color.Magenta
+                tint = Color.Magenta,
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
                 modifier = Modifier,
                 text = "4.4",
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }
@@ -195,25 +195,27 @@ private fun AppBarLayout(
         Icon(
             modifier = Modifier
                 .size(12.dp),
-            imageVector = Icons.Default.Place, contentDescription = null
+            imageVector = Icons.Default.Place,
+            contentDescription = null,
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
             modifier = Modifier,
             text = "1.6km",
-            style = MaterialTheme.typography.labelSmall
+            style = MaterialTheme.typography.labelSmall,
         )
         Spacer(modifier = Modifier.width(10.dp))
         Icon(
             modifier = Modifier
                 .size(12.dp),
-            imageVector = Icons.Default.Info, contentDescription = null
+            imageVector = Icons.Default.Info,
+            contentDescription = null,
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
             modifier = Modifier,
             text = "5 mins",
-            style = MaterialTheme.typography.labelSmall
+            style = MaterialTheme.typography.labelSmall,
         )
     }
 }
@@ -223,19 +225,19 @@ private fun ActionLayout(navController: NavController, stationId: String) {
     Row(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Button(
             modifier = Modifier
                 .weight(1f),
-            onClick = { navController.navigate("${Screen.Directions.route}/${stationId}") }
+            onClick = { navController.navigate("${Screen.Directions.route}/$stationId") },
         ) {
             Text(text = "Get Directions")
         }
         OutlinedButton(
             modifier = Modifier
                 .weight(1f),
-            onClick = { navController.navigate(Screen.Booking.route) }
+            onClick = { navController.navigate(Screen.Booking.route) },
         ) {
             Text(text = "Book")
         }
@@ -245,7 +247,8 @@ private fun ActionLayout(navController: NavController, stationId: String) {
 enum class Tab(val label: String) {
     Info("Info"),
     Chargers("Chargers"),
-    Reviews("Reviews");
+    Reviews("Reviews"),
+    ;
 
     companion object {
         val All = listOf(Info, Chargers, Reviews)
@@ -267,7 +270,7 @@ private fun TabLayout(
         items(tabs) {
             TabItem(
                 title = it.label,
-                selected = selected == it
+                selected = selected == it,
             ) {
                 onItemClicked(it)
             }
@@ -298,7 +301,7 @@ private fun TabItem(
                     top.linkTo(parent.top)
                 },
             text = title,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
         )
         Box(
             modifier = Modifier
@@ -309,7 +312,7 @@ private fun TabItem(
                     end.linkTo(label.end)
                 }
                 .height(3.dp)
-                .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
+                .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent),
         )
     }
 }
@@ -322,12 +325,12 @@ private fun InfoLayout() {
     ) {
         Text(
             text = "About",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = LoremIpsum(100).values.first().toString(),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }
@@ -341,17 +344,17 @@ private fun ChargersLayout() {
         ChargerItem()
         Divider(
             color = Color.LightGray,
-            thickness = 0.5.dp
+            thickness = 0.5.dp,
         )
         ChargerItem()
         Divider(
             color = Color.LightGray,
-            thickness = 0.5.dp
+            thickness = 0.5.dp,
         )
         ChargerItem()
         Divider(
             color = Color.LightGray,
-            thickness = 0.5.dp
+            thickness = 0.5.dp,
         )
         ChargerItem()
     }
@@ -362,14 +365,14 @@ private fun ChargerItem() {
     Row(
         modifier = Modifier
             .padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier
                 .size(30.dp),
             imageVector = Icons.Default.Info,
             contentDescription = null,
-            tint = Color.Gray
+            tint = Color.Gray,
         )
         Column(
             modifier = Modifier
@@ -378,11 +381,11 @@ private fun ChargerItem() {
         ) {
             Text(
                 text = "Tesla",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = "100 kW",
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     }
@@ -394,6 +397,6 @@ private fun Reviews() {
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp),
         text = "WIP",
-        style = MaterialTheme.typography.titleMedium
+        style = MaterialTheme.typography.titleMedium,
     )
 }

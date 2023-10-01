@@ -31,7 +31,7 @@ fun DirectionsScreen(navController: NavController, stationId: String) {
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(LatLng(station.lat, station.lng), 15f)
@@ -39,7 +39,7 @@ fun DirectionsScreen(navController: NavController, stationId: String) {
         GoogleMap(
             modifier = Modifier
                 .fillMaxSize(),
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
         ) {
             Marker(
                 state = MarkerState(position = LatLng(station.lat, station.lng)),
@@ -47,7 +47,6 @@ fun DirectionsScreen(navController: NavController, stationId: String) {
                     return@Marker false
                 },
             )
-
         }
         ToolbarLayout(navController)
         Button(
@@ -55,7 +54,8 @@ fun DirectionsScreen(navController: NavController, stationId: String) {
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            onClick = { /*TODO*/ }) {
+            onClick = { /*TODO*/ },
+        ) {
             Text(text = "Start")
         }
     }

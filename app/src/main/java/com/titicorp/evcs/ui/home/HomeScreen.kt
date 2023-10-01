@@ -51,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -67,7 +66,7 @@ import com.titicorp.evcs.model.Station
 @Composable
 fun HomeScreen(navController: NavHostController) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         val stations = Station.Nearby
         var currentStation: Station by remember {
@@ -83,18 +82,17 @@ fun HomeScreen(navController: NavHostController) {
             FilterLayout(
                 modifier = Modifier
                     .padding(top = 20.dp),
-                selected = currentFilter
+                selected = currentFilter,
             ) {
                 currentFilter = it
             }
-
 
             MapLayout(
                 stations = stations,
                 selected = currentStation,
                 onItemClick = {
                     currentStation = it
-                }
+                },
             )
         }
         StationLayout(
@@ -108,11 +106,9 @@ fun HomeScreen(navController: NavHostController) {
             },
             onItemFocused = {
                 currentStation = it
-            }
+            },
         )
     }
-
-
 }
 
 @Composable
@@ -124,20 +120,20 @@ private fun ToolbarLayout() {
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 imageVector = Icons.Default.Menu,
-                contentDescription = null
+                contentDescription = null,
             )
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = null
+                contentDescription = null,
             )
         }
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }
@@ -149,13 +145,13 @@ private fun GreetingLayout() {
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp),
         text = "Hello",
-        style = MaterialTheme.typography.bodySmall
+        style = MaterialTheme.typography.bodySmall,
     )
     Text(
         modifier = Modifier
             .padding(start = 20.dp),
         text = "Thomas Shelby",
-        style = MaterialTheme.typography.headlineSmall
+        style = MaterialTheme.typography.headlineSmall,
     )
 }
 
@@ -163,17 +159,17 @@ private fun GreetingLayout() {
 private fun FilterLayout(
     modifier: Modifier,
     selected: Filter,
-    onItemClicked: (Filter) -> Unit
+    onItemClicked: (Filter) -> Unit,
 ) {
     LazyRow(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(Filter.All) {
             FilterItem(
                 filter = it,
-                selected = it == selected
+                selected = it == selected,
             ) {
                 onItemClicked(it)
             }
@@ -209,7 +205,7 @@ private fun StationLayout(
 ) {
     val pagerState = rememberPagerState(
         initialPage = stations.indexOf(selected),
-        pageCount = { stations.size }
+        pageCount = { stations.size },
     )
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
@@ -225,7 +221,7 @@ private fun StationLayout(
     HorizontalPager(
         modifier = modifier,
         state = pagerState,
-        contentPadding = PaddingValues(horizontal = 60.dp)
+        contentPadding = PaddingValues(horizontal = 60.dp),
     ) { page ->
         val station = stations[page]
         StationItem(station = station) {
@@ -254,7 +250,7 @@ private fun StationItem(
                 .background(MaterialTheme.colorScheme.secondaryContainer),
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentScale = ContentScale.Crop,
-            contentDescription = null
+            contentDescription = null,
         )
 
         Row(
@@ -277,7 +273,7 @@ private fun StationItem(
                 Text(
                     modifier = Modifier,
                     text = station.address,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
                 )
 
                 Row(
@@ -288,25 +284,27 @@ private fun StationItem(
                     Icon(
                         modifier = Modifier
                             .size(12.dp),
-                        imageVector = Icons.Default.Place, contentDescription = null
+                        imageVector = Icons.Default.Place,
+                        contentDescription = null,
                     )
                     Spacer(modifier = Modifier.width(2.dp))
                     Text(
                         modifier = Modifier,
                         text = "1.6km",
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Icon(
                         modifier = Modifier
                             .size(12.dp),
-                        imageVector = Icons.Default.Info, contentDescription = null
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
                     )
                     Spacer(modifier = Modifier.width(2.dp))
                     Text(
                         modifier = Modifier,
                         text = "5 mins",
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
                     )
                 }
             }
@@ -318,7 +316,6 @@ private fun StationItem(
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
             }
         }
-
     }
 }
 
@@ -335,19 +332,19 @@ private fun MapLayout(
     if (currentPosition.latitude != selected.lat || currentPosition.longitude != selected.lng) {
         LaunchedEffect(selected) {
             cameraPositionState.animate(
-                CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(selected.lat, selected.lng), 15f))
+                CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(selected.lat, selected.lng), 15f)),
             )
         }
     }
     Box(
         modifier = Modifier
             .padding(top = 20.dp)
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         GoogleMap(
             modifier = Modifier
                 .fillMaxSize(),
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
         ) {
             repeat(stations.size) { index ->
                 val station = stations[index]
@@ -359,7 +356,6 @@ private fun MapLayout(
                     },
                 )
             }
-
         }
         Box(
             modifier = Modifier
@@ -368,8 +364,8 @@ private fun MapLayout(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
-                    )
-                )
+                    ),
+                ),
         )
     }
 }

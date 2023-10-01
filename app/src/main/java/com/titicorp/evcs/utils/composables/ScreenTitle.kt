@@ -8,6 +8,6 @@ import androidx.compose.runtime.Composable
 fun ScreenTitle(title: String) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleLarge
+        style = MaterialTheme.typography.titleLarge,
     )
 }

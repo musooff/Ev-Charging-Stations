@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable(Screen.Booking.route) { BookingScreen(navController) }
-                composable("${Screen.Directions.route}/{stationId}") {backStackEntry ->
+                composable("${Screen.Directions.route}/{stationId}") { backStackEntry ->
                     DirectionsScreen(
                         navController = navController,
                         stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
