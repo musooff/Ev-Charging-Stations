@@ -21,24 +21,34 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -62,62 +72,156 @@ import com.titicorp.evcs.R
 import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Filter
 import com.titicorp.evcs.model.Station
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        val stations = Station.Nearby
-        var currentStation: Station by remember {
-            mutableStateOf(stations.first())
-        }
-        Column {
-            ToolbarLayout()
-            GreetingLayout()
-
-            var currentFilter by remember {
-                mutableStateOf(Filter.Nearby)
-            }
-            FilterLayout(
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
                 modifier = Modifier
-                    .padding(top = 20.dp),
-                selected = currentFilter,
+                    .fillMaxWidth(0.8f),
             ) {
-                currentFilter = it
+                GreetingLayout()
+                Spacer(modifier = Modifier.height(20.dp))
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = "My Bookings",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
+                    },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(Screen.MyBookings.route)
+                    },
+                )
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = "Saved",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Favorite, contentDescription = null)
+                    },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(Screen.Saved.route)
+                    },
+                )
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = "Settings",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+                    },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(Screen.Settings.route)
+                    },
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = "Sign Out",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                    },
+                    selected = false,
+                    onClick = { /*TODO*/ },
+                )
             }
+        },
+        gesturesEnabled = drawerState.isOpen,
+        content = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                val stations = Station.Nearby
+                var currentStation: Station by remember {
+                    mutableStateOf(stations.first())
+                }
+                Column {
+                    ToolbarLayout(
+                        onMenuClick = {
+                            scope.launch {
+                                drawerState.open()
+                            }
+                        },
+                    )
+                    GreetingLayout()
 
-            MapLayout(
-                stations = stations,
-                selected = currentStation,
-                onItemClick = {
-                    currentStation = it
-                },
-            )
-        }
-        StationLayout(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp),
-            stations = stations,
-            selected = currentStation,
-            onItemClick = {
-                navController.navigate("${Screen.Station.route}/${currentStation.id}")
-            },
-            onItemFocused = {
-                currentStation = it
-            },
-        )
-    }
+                    var currentFilter by remember {
+                        mutableStateOf(Filter.Nearby)
+                    }
+                    FilterLayout(
+                        modifier = Modifier
+                            .padding(top = 20.dp),
+                        selected = currentFilter,
+                    ) {
+                        currentFilter = it
+                    }
+
+                    MapLayout(
+                        stations = stations,
+                        selected = currentStation,
+                        onItemClick = {
+                            currentStation = it
+                        },
+                    )
+                }
+                StationLayout(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 20.dp),
+                    stations = stations,
+                    selected = currentStation,
+                    onItemClick = {
+                        navController.navigate("${Screen.Station.route}/${currentStation.id}")
+                    },
+                    onItemFocus = {
+                        currentStation = it
+                    },
+                )
+            }
+        },
+    )
 }
 
 @Composable
-private fun ToolbarLayout() {
+private fun ToolbarLayout(
+    onMenuClick: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = onMenuClick) {
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = null,
@@ -201,7 +305,7 @@ private fun StationLayout(
     stations: List<Station>,
     selected: Station,
     onItemClick: (Station) -> Unit,
-    onItemFocused: (Station) -> Unit,
+    onItemFocus: (Station) -> Unit,
 ) {
     val pagerState = rememberPagerState(
         initialPage = stations.indexOf(selected),
@@ -210,7 +314,7 @@ private fun StationLayout(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .collect { page ->
-                onItemFocused(stations[page])
+                onItemFocus(stations[page])
             }
     }
     if (stations.indexOf(selected) != pagerState.currentPage) {

@@ -9,6 +9,9 @@ import androidx.navigation.compose.rememberNavController
 import com.titicorp.evcs.ui.booking.BookingScreen
 import com.titicorp.evcs.ui.directions.DirectionsScreen
 import com.titicorp.evcs.ui.home.HomeScreen
+import com.titicorp.evcs.ui.mybookings.MyBookingsScreen
+import com.titicorp.evcs.ui.saved.SavedScreen
+import com.titicorp.evcs.ui.settings.SettingsScreen
 import com.titicorp.evcs.ui.station.StationScreen
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +34,9 @@ class MainActivity : ComponentActivity() {
                         stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
                     )
                 }
+                composable(Screen.MyBookings.route) { MyBookingsScreen(navController) }
+                composable(Screen.Settings.route) { SettingsScreen(navController) }
+                composable(Screen.Saved.route) { SavedScreen(navController) }
             }
         }
     }
@@ -41,4 +47,7 @@ enum class Screen(val route: String) {
     Station("station"),
     Booking("booking"),
     Directions("directions"),
+    MyBookings("myBookings"),
+    Saved("saved"),
+    Settings("settings"),
 }
