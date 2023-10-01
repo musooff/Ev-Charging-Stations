@@ -1,5 +1,6 @@
 package com.titicorp.evcs.ui.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -32,10 +35,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +50,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.android.gms.maps.CameraUpdate
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -84,16 +91,27 @@ fun HomeScreen(navController: NavHostController) {
             }
 
 
-            MapLayout(stations = stations)
+            MapLayout(
+                stations = stations,
+                selected = currentStation,
+                onItemClick = {
+                    currentStation = it
+                }
+            )
         }
         StationLayout(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp),
             stations = stations,
-        ) {
-            navController.navigate(Screen.Station.route)
-        }
+            selected = currentStation,
+            onItemClick = {
+                navController.navigate(Screen.Station.route)
+            },
+            onItemFocused = {
+                currentStation = it
+            }
+        )
     }
 
 
@@ -182,21 +200,38 @@ private fun FilterItem(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StationLayout(
     modifier: Modifier = Modifier,
     stations: List<Station>,
+    selected: Station,
     onItemClick: (Station) -> Unit,
+    onItemFocused: (Station) -> Unit,
 ) {
-    LazyRow(
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        items(stations) {
-            StationItem(station = Station.Sample) {
-                onItemClick(it)
+    val pagerState = rememberPagerState(
+        initialPage = stations.indexOf(selected),
+        pageCount = { stations.size }
+    )
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collect { page ->
+                onItemFocused(stations[page])
             }
+    }
+    if (stations.indexOf(selected) != pagerState.currentPage) {
+        LaunchedEffect(selected) {
+            pagerState.scrollToPage(stations.indexOf(selected))
+        }
+    }
+    HorizontalPager(
+        modifier = modifier,
+        state = pagerState,
+        contentPadding = PaddingValues(horizontal = 60.dp)
+    ) { page ->
+        val station = stations[page]
+        StationItem(station = station) {
+            onItemClick(station)
         }
     }
 }
@@ -288,10 +323,21 @@ private fun StationItem(
 }
 
 @Composable
-private fun MapLayout(stations: List<Station>) {
-    val first = stations.first()
+private fun MapLayout(
+    stations: List<Station>,
+    selected: Station,
+    onItemClick: (Station) -> Unit,
+) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(first.lat, first.lng), 15f)
+        position = CameraPosition.fromLatLngZoom(LatLng(selected.lat, selected.lng), 15f)
+    }
+    val currentPosition = cameraPositionState.position.target
+    if (currentPosition.latitude != selected.lat || currentPosition.longitude != selected.lng) {
+        LaunchedEffect(selected) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(LatLng(selected.lat, selected.lng), 15f))
+            )
+        }
     }
     Box(
         modifier = Modifier
@@ -304,11 +350,11 @@ private fun MapLayout(stations: List<Station>) {
             cameraPositionState = cameraPositionState
         ) {
             repeat(stations.size) { index ->
+                val station = stations[index]
                 Marker(
-                    state = MarkerState(position = LatLng(stations[index].lat, stations[index].lng)),
-                    title = first.title,
-                    snippet = first.address,
+                    state = MarkerState(position = LatLng(station.lat, station.lng)),
                     onClick = {
+                        onItemClick(station)
                         return@Marker false
                     },
                 )
