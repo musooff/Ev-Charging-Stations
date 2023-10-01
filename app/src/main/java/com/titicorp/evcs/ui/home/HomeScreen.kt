@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdate
@@ -72,10 +73,7 @@ fun HomeScreen(navController: NavHostController) {
         var currentStation: Station by remember {
             mutableStateOf(stations.first())
         }
-        Column(
-            modifier = Modifier
-                .padding(top = 10.dp)
-        ) {
+        Column {
             ToolbarLayout()
             GreetingLayout()
 
@@ -106,7 +104,7 @@ fun HomeScreen(navController: NavHostController) {
             stations = stations,
             selected = currentStation,
             onItemClick = {
-                navController.navigate(Screen.Station.route)
+                navController.navigate("${Screen.Station.route}/${currentStation.id}")
             },
             onItemFocused = {
                 currentStation = it
@@ -121,7 +119,7 @@ fun HomeScreen(navController: NavHostController) {
 private fun ToolbarLayout() {
     Row(
         modifier = Modifier
-            .padding(horizontal = 10.dp)
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
@@ -272,7 +270,9 @@ private fun StationItem(
                     modifier = Modifier
                         .padding(top = 10.dp),
                     text = station.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     modifier = Modifier,

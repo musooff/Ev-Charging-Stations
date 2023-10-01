@@ -26,7 +26,9 @@ import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.ScreenTitle
 
 @Composable
-fun DirectionsScreen(navController: NavController, station: Station = Station.Sample) {
+fun DirectionsScreen(navController: NavController, stationId: String) {
+    val station = Station.byId(stationId)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +65,7 @@ fun DirectionsScreen(navController: NavController, station: Station = Station.Sa
 private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 10.dp),
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = { navController.navigateUp() }) {

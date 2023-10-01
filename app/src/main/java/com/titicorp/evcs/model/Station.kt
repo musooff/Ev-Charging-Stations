@@ -51,5 +51,9 @@ data class Station(
                 thumbnail = null
             ),
         )
+
+        fun byId(id: String): Station {
+            return Nearby.first { it.id == id }
+        }
     }
 }

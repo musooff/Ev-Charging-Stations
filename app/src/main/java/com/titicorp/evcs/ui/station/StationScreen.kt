@@ -21,8 +21,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -55,7 +55,8 @@ import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Station
 
 @Composable
-fun StationScreen(navController: NavController, station: Station = Station.Sample) {
+fun StationScreen(navController: NavController, stationId: String) {
+    val station = Station.byId(stationId)
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -68,7 +69,7 @@ fun StationScreen(navController: NavController, station: Station = Station.Sampl
             }
 
             item {
-                ActionLayout(navController)
+                ActionLayout(navController, stationId)
             }
 
             item {
@@ -96,7 +97,7 @@ fun StationScreen(navController: NavController, station: Station = Station.Sampl
 private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 10.dp)
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
     ) {
         IconButton(onClick = {
             navController.navigateUp()
@@ -115,7 +116,7 @@ private fun ToolbarLayout(navController: NavController) {
         }
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
-                imageVector = Icons.Default.Person,
+                imageVector = Icons.Default.Favorite,
                 contentDescription = null,
             )
         }
@@ -218,7 +219,7 @@ private fun AppBarLayout(
 }
 
 @Composable
-private fun ActionLayout(navController: NavController) {
+private fun ActionLayout(navController: NavController, stationId: String) {
     Row(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp),
@@ -227,7 +228,7 @@ private fun ActionLayout(navController: NavController) {
         Button(
             modifier = Modifier
                 .weight(1f),
-            onClick = { navController.navigate(Screen.Directions.route) }
+            onClick = { navController.navigate("${Screen.Directions.route}/${stationId}") }
         ) {
             Text(text = "Get Directions")
         }

@@ -18,9 +18,19 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = Screen.Home.route) {
                 composable(Screen.Home.route) { HomeScreen(navController) }
-                composable(Screen.Station.route) { StationScreen(navController) }
+                composable("${Screen.Station.route}/{stationId}") { backStackEntry ->
+                    StationScreen(
+                        navController = navController,
+                        stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
+                    )
+                }
                 composable(Screen.Booking.route) { BookingScreen(navController) }
-                composable(Screen.Directions.route) { DirectionsScreen(navController) }
+                composable("${Screen.Directions.route}/{stationId}") {backStackEntry ->
+                    DirectionsScreen(
+                        navController = navController,
+                        stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
+                    )
+                }
             }
         }
     }

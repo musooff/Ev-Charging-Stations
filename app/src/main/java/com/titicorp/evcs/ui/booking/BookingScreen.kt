@@ -89,7 +89,7 @@ fun BookingScreen(navController: NavController) {
 private fun ToolbarLayout(navController: NavController) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 10.dp),
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
