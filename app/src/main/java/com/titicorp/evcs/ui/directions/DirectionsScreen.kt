@@ -1,5 +1,7 @@
 package com.titicorp.evcs.ui.directions
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
@@ -24,6 +27,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.ScreenTitle
+
 
 @Composable
 fun DirectionsScreen(navController: NavController, stationId: String) {
@@ -49,12 +53,17 @@ fun DirectionsScreen(navController: NavController, stationId: String) {
             )
         }
         ToolbarLayout(navController)
+        val context = LocalContext.current
         Button(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            onClick = { /*TODO*/ },
+            onClick = {
+                val url = "https://www.google.com/maps/dir/?api=1&destination=Madrid,Spain&origin=Barcelona,Spain&travelmode=driving&dir_action=navigate"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            },
         ) {
             Text(text = "Start")
         }
