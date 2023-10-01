@@ -28,7 +28,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.ScreenTitle
 
-
 @Composable
 fun DirectionsScreen(navController: NavController, stationId: String) {
     val station = Station.byId(stationId)
