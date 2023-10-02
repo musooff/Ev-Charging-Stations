@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Info
@@ -51,6 +50,8 @@ import com.titicorp.evcs.R
 import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.ScreenTitle
+import com.titicorp.evcs.utils.composables.Status
+import com.titicorp.evcs.utils.composables.StatusItem
 
 @Composable
 fun MyBookingsScreen(navController: NavController) {
@@ -227,6 +228,7 @@ private fun CompletedBooking(navController: NavController, station: Station = St
         Row(
             modifier = Modifier
                 .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             ProvideTextStyle(value = MaterialTheme.typography.labelMedium) {
                 Text(text = "10:00")
@@ -236,6 +238,10 @@ private fun CompletedBooking(navController: NavController, station: Station = St
                 )
                 Text(text = "31 Jan 2023")
             }
+            Spacer(modifier = Modifier.weight(1f))
+            StatusItem(
+                status = if (station.title.startsWith("Second")) Status.InUse else Status.Available,
+            )
         }
         InfoLayout()
         Spacer(modifier = Modifier.height(10.dp))
