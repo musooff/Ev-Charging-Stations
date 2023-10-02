@@ -10,6 +10,7 @@ import com.titicorp.evcs.ui.booking.BookingScreen
 import com.titicorp.evcs.ui.directions.DirectionsScreen
 import com.titicorp.evcs.ui.home.HomeScreen
 import com.titicorp.evcs.ui.my.MyScreen
+import com.titicorp.evcs.ui.mybookings.MyBookingsScreen
 import com.titicorp.evcs.ui.saved.SavedScreen
 import com.titicorp.evcs.ui.settings.SettingsScreen
 import com.titicorp.evcs.ui.station.StationScreen
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                         stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
                     )
                 }
-                composable(Screen.MyBookings.route) { MyScreen(navController) }
+                composable(Screen.MyBookings.route) { MyBookingsScreen(navController) }
                 composable(Screen.Settings.route) { SettingsScreen(navController) }
                 composable(Screen.Saved.route) { SavedScreen(navController) }
                 composable(Screen.My.route) { MyScreen(navController) }

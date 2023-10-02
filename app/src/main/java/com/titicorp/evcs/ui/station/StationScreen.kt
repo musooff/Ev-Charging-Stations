@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -33,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -368,11 +370,8 @@ private fun ChargerItem() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier
-                .size(30.dp),
-            imageVector = Icons.Default.Info,
+            imageVector = Icons.Outlined.Info,
             contentDescription = null,
-            tint = Color.Gray,
         )
         Column(
             modifier = Modifier
@@ -381,12 +380,18 @@ private fun ChargerItem() {
         ) {
             Text(
                 text = "Tesla",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
-            Text(
-                text = "100 kW",
-                style = MaterialTheme.typography.labelSmall,
-            )
+            Row {
+                ProvideTextStyle(value = MaterialTheme.typography.labelMedium) {
+                    Text(text = "100 kW")
+                    Text(
+                        modifier = Modifier.padding(horizontal = 5.dp),
+                        text = "·",
+                    )
+                    Text(text = "Max.Power")
+                }
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.titicorp.evcs.model
 
 enum class Filter(
-    val title: String
+    val label: String
 ) {
     Nearby("Nearby"),
     Favorite("Favorite"),

@@ -311,11 +311,11 @@ private fun FilterItem(
 ) {
     if (selected) {
         Button(onClick = onClick) {
-            Text(text = filter.title)
+            Text(text = filter.label)
         }
     } else {
         TextButton(onClick = onClick) {
-            Text(text = filter.title)
+            Text(text = filter.label)
         }
     }
 }
@@ -400,6 +400,8 @@ private fun StationItem(
                     modifier = Modifier,
                     text = station.address,
                     style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Row(
