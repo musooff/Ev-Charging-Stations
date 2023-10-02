@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,7 +61,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -75,147 +76,168 @@ import com.titicorp.evcs.model.Station
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
-    val scope = rememberCoroutineScope()
+fun HomeScreen(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f),
-            ) {
-                GreetingLayout()
-                Spacer(modifier = Modifier.height(20.dp))
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            text = "My Bookings",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    icon = {
-                        Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
-                    },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                        navController.navigate(Screen.MyBookings.route)
-                    },
-                )
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            text = "Saved",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    icon = {
-                        Icon(imageVector = Icons.Default.Favorite, contentDescription = null)
-                    },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                        navController.navigate(Screen.Saved.route)
-                    },
-                )
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            text = "Settings",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    icon = {
-                        Icon(imageVector = Icons.Default.Settings, contentDescription = null)
-                    },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                        navController.navigate(Screen.Settings.route)
-                    },
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            text = "Sign Out",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    icon = {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = null)
-                    },
-                    selected = false,
-                    onClick = { /*TODO*/ },
-                )
-            }
+            DrawerSheet(navController = navController, drawerState = drawerState)
         },
         gesturesEnabled = drawerState.isOpen,
         content = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                val stations = Station.Nearby
-                var currentStation: Station by remember {
-                    mutableStateOf(stations.first())
-                }
-                Column {
-                    ToolbarLayout(
-                        onMenuClick = {
-                            scope.launch {
-                                drawerState.open()
-                            }
-                        },
-                    )
-                    GreetingLayout()
-
-                    var currentFilter by remember {
-                        mutableStateOf(Filter.Nearby)
-                    }
-                    FilterLayout(
-                        modifier = Modifier
-                            .padding(top = 20.dp),
-                        selected = currentFilter,
-                    ) {
-                        currentFilter = it
-                    }
-
-                    MapLayout(
-                        stations = stations,
-                        selected = currentStation,
-                        onItemClick = {
-                            currentStation = it
-                        },
-                    )
-                }
-                StationLayout(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp),
-                    stations = stations,
-                    selected = currentStation,
-                    onItemClick = {
-                        navController.navigate("${Screen.Station.route}/${currentStation.id}")
-                    },
-                    onItemFocus = {
-                        currentStation = it
-                    },
-                )
-            }
+            Content(navController = navController, drawerState = drawerState)
         },
     )
 }
 
 @Composable
+private fun DrawerSheet(
+    navController: NavController,
+    drawerState: DrawerState,
+) {
+    val scope = rememberCoroutineScope()
+    ModalDrawerSheet(
+        modifier = Modifier
+            .fillMaxWidth(0.8f),
+    ) {
+        GreetingLayout()
+        Spacer(modifier = Modifier.height(20.dp))
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = "My Bookings",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            icon = {
+                Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
+            },
+            selected = false,
+            onClick = {
+                scope.launch {
+                    drawerState.close()
+                }
+                navController.navigate(Screen.MyBookings.route)
+            },
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = "Saved",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            icon = {
+                Icon(imageVector = Icons.Default.Favorite, contentDescription = null)
+            },
+            selected = false,
+            onClick = {
+                scope.launch {
+                    drawerState.close()
+                }
+                navController.navigate(Screen.Saved.route)
+            },
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = "Settings",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            icon = {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+            },
+            selected = false,
+            onClick = {
+                scope.launch {
+                    drawerState.close()
+                }
+                navController.navigate(Screen.Settings.route)
+            },
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = "Sign Out",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            icon = {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+            },
+            selected = false,
+            onClick = { /*TODO*/ },
+        )
+    }
+}
+
+@Composable
+private fun Content(
+    navController: NavController,
+    drawerState: DrawerState,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        val stations = Station.Nearby
+        var currentStation: Station by remember {
+            mutableStateOf(stations.first())
+        }
+        Column {
+            val scope = rememberCoroutineScope()
+            ToolbarLayout(
+                onMenuClick = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                },
+                onMyClick = {
+                    navController.navigate(Screen.My.route)
+                },
+            )
+            GreetingLayout()
+
+            var currentFilter by remember {
+                mutableStateOf(Filter.Nearby)
+            }
+            FilterLayout(
+                modifier = Modifier
+                    .padding(top = 20.dp),
+                selected = currentFilter,
+            ) {
+                currentFilter = it
+            }
+
+            MapLayout(
+                stations = stations,
+                selected = currentStation,
+                onItemClick = {
+                    currentStation = it
+                },
+            )
+        }
+        StationLayout(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp),
+            stations = stations,
+            selected = currentStation,
+            onItemClick = {
+                navController.navigate("${Screen.Station.route}/${currentStation.id}")
+            },
+            onItemFocus = {
+                currentStation = it
+            },
+        )
+    }
+}
+
+@Composable
 private fun ToolbarLayout(
     onMenuClick: () -> Unit,
+    onMyClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -234,7 +256,7 @@ private fun ToolbarLayout(
                 contentDescription = null,
             )
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = onMyClick) {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = null,
