@@ -156,7 +156,10 @@ private fun SavedItem(navController: NavController, station: Station = Station.S
         }
         Row(
             modifier = Modifier
-                .padding(20.dp),
+                .padding(vertical = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color(0xFFEEEEEE))
+                .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(

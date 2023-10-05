@@ -227,7 +227,10 @@ private fun CompletedBooking(navController: NavController, station: Station = St
         }
         Row(
             modifier = Modifier
-                .padding(20.dp),
+                .padding(vertical = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color(0xFFEEEEEE))
+                .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ProvideTextStyle(value = MaterialTheme.typography.labelMedium) {
