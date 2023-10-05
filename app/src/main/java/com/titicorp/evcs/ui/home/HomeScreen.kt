@@ -98,7 +98,7 @@ private fun DrawerSheet(
     val scope = rememberCoroutineScope()
     ModalDrawerSheet(
         modifier = Modifier
-            .fillMaxWidth(0.8f),
+            .width(320.dp),
     ) {
         GreetingLayout()
         Spacer(modifier = Modifier.height(20.dp))
@@ -348,6 +348,7 @@ private fun StationLayout(
         modifier = modifier,
         state = pagerState,
         contentPadding = PaddingValues(horizontal = 60.dp),
+        pageSpacing = 20.dp,
     ) { page ->
         val station = stations[page]
         StationItem(station = station) {
@@ -363,7 +364,7 @@ private fun StationItem(
 ) {
     Column(
         modifier = Modifier
-            .width(220.dp)
+            .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.surface)
             .padding(10.dp),
