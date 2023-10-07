@@ -33,6 +33,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.gson)
+    implementation(libs.okhttp.intercepter.logging)
     implementation(libs.hilt.core)
 
     kapt(libs.hilt.compiler)
