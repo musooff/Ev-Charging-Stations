@@ -46,6 +46,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -73,10 +75,14 @@ import com.titicorp.evcs.R
 import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Filter
 import com.titicorp.evcs.model.Station
+import com.titicorp.evcs.utils.composables.Loading
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -85,7 +91,11 @@ fun HomeScreen(navController: NavController) {
         },
         gesturesEnabled = drawerState.isOpen,
         content = {
-            Content(navController = navController, drawerState = drawerState)
+            Content(
+                navController = navController,
+                drawerState = drawerState,
+                viewModel = viewModel,
+            )
         },
     )
 }
@@ -177,60 +187,68 @@ private fun DrawerSheet(
 private fun Content(
     navController: NavController,
     drawerState: DrawerState,
+    viewModel: HomeViewModel,
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        val stations = Station.Nearby
-        var currentStation: Station by remember {
-            mutableStateOf(stations.first())
-        }
-        Column {
-            val scope = rememberCoroutineScope()
-            ToolbarLayout(
-                onMenuClick = {
-                    scope.launch {
-                        drawerState.open()
+        val uiState by viewModel.uiState.collectAsState()
+        when (val state = uiState) {
+            HomeViewModel.UiState.Loading -> {
+                Loading()
+            }
+            is HomeViewModel.UiState.Stations -> {
+                var currentStation: Station by remember {
+                    mutableStateOf(state.data.first())
+                }
+                Column {
+                    val scope = rememberCoroutineScope()
+                    ToolbarLayout(
+                        onMenuClick = {
+                            scope.launch {
+                                drawerState.open()
+                            }
+                        },
+                        onMyClick = {
+                            navController.navigate(Screen.My.route)
+                        },
+                    )
+                    GreetingLayout()
+
+                    var currentFilter by remember {
+                        mutableStateOf(Filter.Nearby)
                     }
-                },
-                onMyClick = {
-                    navController.navigate(Screen.My.route)
-                },
-            )
-            GreetingLayout()
+                    FilterLayout(
+                        modifier = Modifier
+                            .padding(top = 20.dp),
+                        selected = currentFilter,
+                    ) {
+                        currentFilter = it
+                    }
 
-            var currentFilter by remember {
-                mutableStateOf(Filter.Nearby)
+                    MapLayout(
+                        stations = state.data,
+                        selected = currentStation,
+                        onItemClick = {
+                            currentStation = it
+                        },
+                    )
+                }
+                StationLayout(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 20.dp),
+                    stations = state.data,
+                    selected = currentStation,
+                    onItemClick = {
+                        navController.navigate("${Screen.Station.route}/${currentStation.id}")
+                    },
+                    onItemFocus = {
+                        currentStation = it
+                    },
+                )
             }
-            FilterLayout(
-                modifier = Modifier
-                    .padding(top = 20.dp),
-                selected = currentFilter,
-            ) {
-                currentFilter = it
-            }
-
-            MapLayout(
-                stations = stations,
-                selected = currentStation,
-                onItemClick = {
-                    currentStation = it
-                },
-            )
         }
-        StationLayout(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp),
-            stations = stations,
-            selected = currentStation,
-            onItemClick = {
-                navController.navigate("${Screen.Station.route}/${currentStation.id}")
-            },
-            onItemFocus = {
-                currentStation = it
-            },
-        )
     }
 }
 

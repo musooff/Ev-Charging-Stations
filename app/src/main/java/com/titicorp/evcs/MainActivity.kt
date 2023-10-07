@@ -14,10 +14,13 @@ import com.titicorp.evcs.ui.mybookings.MyBookingsScreen
 import com.titicorp.evcs.ui.saved.SavedScreen
 import com.titicorp.evcs.ui.settings.SettingsScreen
 import com.titicorp.evcs.ui.station.StationScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = Screen.Home.route) {

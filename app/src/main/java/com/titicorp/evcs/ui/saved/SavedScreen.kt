@@ -33,6 +33,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.titicorp.evcs.R
 import com.titicorp.evcs.Screen
@@ -50,18 +53,22 @@ import com.titicorp.evcs.utils.composables.Status
 import com.titicorp.evcs.utils.composables.StatusItem
 
 @Composable
-fun SavedScreen(navController: NavController) {
+fun SavedScreen(
+    navController: NavController,
+    viewModel: SavedViewModel = hiltViewModel(),
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
     ) {
         ToolbarLayout(navController = navController)
+        val stations by viewModel.stations.collectAsState()
         LazyColumn(
             contentPadding = PaddingValues(20.dp),
         ) {
-            itemsIndexed(Station.Nearby) { index, item ->
+            itemsIndexed(stations) { index, item ->
                 SavedItem(navController, item)
-                if (index != Station.Nearby.size - 1) {
+                if (index != stations.size - 1) {
                     Divider(
                         modifier = Modifier.padding(vertical = 10.dp),
                     )
@@ -100,7 +107,7 @@ private fun ToolbarLayout(navController: NavController) {
 }
 
 @Composable
-private fun SavedItem(navController: NavController, station: Station = Station.Sample) {
+private fun SavedItem(navController: NavController, station: Station = Station.byId()) {
     Column {
         Row(
             modifier = Modifier

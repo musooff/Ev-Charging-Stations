@@ -33,6 +33,7 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.titicorp.evcs.R
 import com.titicorp.evcs.Screen
@@ -54,7 +56,10 @@ import com.titicorp.evcs.utils.composables.Status
 import com.titicorp.evcs.utils.composables.StatusItem
 
 @Composable
-fun MyBookingsScreen(navController: NavController) {
+fun MyBookingsScreen(
+    navController: NavController,
+    viewModel: MyBookingsViewModel = hiltViewModel(),
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -73,12 +78,13 @@ fun MyBookingsScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(10.dp))
         Divider()
+        val stations by viewModel.stations.collectAsState()
         LazyColumn(
             contentPadding = PaddingValues(20.dp),
         ) {
-            itemsIndexed(Station.Nearby) { index, item ->
+            itemsIndexed(stations) { index, item ->
                 CompletedBooking(navController, item)
-                if (index != Station.Nearby.size - 1) {
+                if (index != stations.size - 1) {
                     Divider(
                         modifier = Modifier.padding(vertical = 10.dp),
                     )
@@ -171,7 +177,7 @@ enum class Filter(val label: String) {
 }
 
 @Composable
-private fun CompletedBooking(navController: NavController, station: Station = Station.Sample) {
+private fun CompletedBooking(navController: NavController, station: Station = Station.byId()) {
     Column {
         Row(
             modifier = Modifier

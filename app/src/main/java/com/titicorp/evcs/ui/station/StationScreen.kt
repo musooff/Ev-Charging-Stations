@@ -58,7 +58,7 @@ import com.titicorp.evcs.model.Station
 
 @Composable
 fun StationScreen(navController: NavController, stationId: String) {
-    val station = Station.byId(stationId)
+    val station = Station.byId()
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
