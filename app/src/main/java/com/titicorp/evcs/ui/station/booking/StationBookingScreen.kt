@@ -1,4 +1,4 @@
-package com.titicorp.evcs.ui.booking
+package com.titicorp.evcs.ui.station.booking
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,12 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import com.titicorp.evcs.Screen
+import com.titicorp.evcs.ui.station.StationScreen
 import com.titicorp.evcs.utils.composables.ScreenTitle
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingScreen(navController: NavController) {
+fun StationBookingScreen(
+    navController: NavController,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -132,7 +135,7 @@ fun BookingScreen(navController: NavController) {
                                     navController.navigate(
                                         route = Screen.MyBookings.route,
                                         navOptions = navOptions {
-                                            popUpTo("${Screen.Station.route}/{stationId}")
+                                            popUpTo(StationScreen.Details.route)
                                         },
                                     )
                                 }

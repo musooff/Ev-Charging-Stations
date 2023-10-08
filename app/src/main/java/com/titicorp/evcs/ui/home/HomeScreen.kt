@@ -197,6 +197,7 @@ private fun Content(
             HomeViewModel.UiState.Loading -> {
                 Loading()
             }
+
             is HomeViewModel.UiState.Stations -> {
                 var currentStation: Station by remember {
                     mutableStateOf(state.data.first())
@@ -241,7 +242,7 @@ private fun Content(
                     stations = state.data,
                     selected = currentStation,
                     onItemClick = {
-                        navController.navigate("${Screen.Station.route}/${currentStation.id}")
+                        navController.navigate(Screen.Station.createRoute(currentStation.id))
                     },
                     onItemFocus = {
                         currentStation = it

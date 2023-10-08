@@ -245,7 +245,7 @@ private fun ActionLayout(navController: NavController, stationId: String) {
         Button(
             modifier = Modifier
                 .weight(1f),
-            onClick = { navController.navigate(Screen.Booking.route) },
+            onClick = { navController.navigate(Screen.Station.route) },
         ) {
             Text(text = "Book")
         }

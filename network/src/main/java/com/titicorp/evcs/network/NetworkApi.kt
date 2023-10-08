@@ -1,6 +1,7 @@
 package com.titicorp.evcs.network
 
 import com.titicorp.evcs.network.model.NetworkStation
+import com.titicorp.evcs.network.model.NetworkStationDetails
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -34,11 +35,29 @@ class NetworkApi @Inject constructor() {
     suspend fun getNearbyStations(): List<NetworkStation> = service.getNearbyStations()
 
     suspend fun getSavedStations(): List<NetworkStation> = service.getSavedStations()
+
+    suspend fun getStationDetails(id: String): NetworkStationDetails = service.getStationDetails(id = id)
 }
 
 private const val BASE_URL = "https://google.com"
 
 private class MockInterceptor : Interceptor {
+
+    private val sample = """
+        {
+            "id": "1",
+            "title": "First Birmingham Station",
+            "description": "",
+            "address": "Park Avenue 110",
+            "lat": 38.574106716422506,
+            "lng": 68.78535232665297,
+            "thumbnail": "https://images.unsplash.com/photo-1574867154971-fd59e11395b2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=1080&ixid=MnwxfDB8MXxyYW5kb218MHx8Z2FzIHN0YXRpb24nfHx8fHx8MTY5NjY1MDA5Mw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920",
+            "chargers":
+            [],
+            "reviews":
+            []
+        }
+    """.trimIndent()
 
     private val nearby = """
         [
@@ -78,9 +97,13 @@ private class MockInterceptor : Interceptor {
     """.trimIndent()
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val body = nearby.toResponseBody("application/json".toMediaTypeOrNull())
         val message = ""
         Thread.sleep(1_000)
+        val body = when (chain.request().url.encodedPath) {
+            "/stations/nearby" -> nearby
+            "/stations/saved" -> nearby
+            else -> sample
+        }.toResponseBody("application/json".toMediaTypeOrNull())
         return Response.Builder()
             .protocol(Protocol.HTTP_1_1)
             .request(chain.request())

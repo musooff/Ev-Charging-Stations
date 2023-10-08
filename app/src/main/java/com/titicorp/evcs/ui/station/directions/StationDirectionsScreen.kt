@@ -1,4 +1,4 @@
-package com.titicorp.evcs.ui.directions
+package com.titicorp.evcs.ui.station.directions
 
 import android.content.Intent
 import android.net.Uri
@@ -25,19 +25,21 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.titicorp.evcs.model.Station
+import com.titicorp.evcs.ui.station.StationViewModel
 import com.titicorp.evcs.utils.composables.ScreenTitle
 
 @Composable
-fun DirectionsScreen(navController: NavController, stationId: String) {
-    val station = Station.byId()
-
+fun StationDirectionsScreen(
+    navController: NavController,
+    state: StationViewModel.UiState.Success,
+) {
+    val details = state.data
     Box(
         modifier = Modifier
             .fillMaxSize(),
     ) {
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(LatLng(station.lat, station.lng), 15f)
+            position = CameraPosition.fromLatLngZoom(LatLng(details.lat, details.lng), 15f)
         }
         GoogleMap(
             modifier = Modifier
@@ -45,7 +47,7 @@ fun DirectionsScreen(navController: NavController, stationId: String) {
             cameraPositionState = cameraPositionState,
         ) {
             Marker(
-                state = MarkerState(position = LatLng(station.lat, station.lng)),
+                state = MarkerState(position = LatLng(details.lat, details.lng)),
                 onClick = {
                     return@Marker false
                 },

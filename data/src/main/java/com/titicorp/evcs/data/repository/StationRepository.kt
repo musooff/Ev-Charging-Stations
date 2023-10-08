@@ -1,6 +1,7 @@
 package com.titicorp.evcs.data.repository
 
 import com.titicorp.evcs.model.Station
+import com.titicorp.evcs.model.StationDetails
 import com.titicorp.evcs.network.NetworkApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +43,24 @@ class StationRepository @Inject constructor(
                         thumbnail = it.thumbnail,
                     )
                 },
+        )
+    }.flowOn(ioDispatcher)
+
+    fun getStationDetails(id: String): Flow<StationDetails> = flow {
+        emit(
+            api.getStationDetails(id).run {
+                StationDetails(
+                    id = this.id,
+                    title = this.title,
+                    description = this.description,
+                    address = this.address,
+                    lat = this.lat,
+                    lng = this.lng,
+                    thumbnail = this.thumbnail,
+                    chargers = this.chargers,
+                    reviews = this.reviews,
+                )
+            },
         )
     }.flowOn(ioDispatcher)
 }

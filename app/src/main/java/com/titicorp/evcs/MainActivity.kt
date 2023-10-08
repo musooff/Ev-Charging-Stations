@@ -6,14 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.titicorp.evcs.ui.booking.BookingScreen
-import com.titicorp.evcs.ui.directions.DirectionsScreen
 import com.titicorp.evcs.ui.home.HomeScreen
 import com.titicorp.evcs.ui.my.MyScreen
 import com.titicorp.evcs.ui.mybookings.MyBookingsScreen
 import com.titicorp.evcs.ui.saved.SavedScreen
 import com.titicorp.evcs.ui.settings.SettingsScreen
-import com.titicorp.evcs.ui.station.StationScreen
+import com.titicorp.evcs.ui.station.stationGraph
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,19 +23,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = Screen.Home.route) {
                 composable(Screen.Home.route) { HomeScreen(navController) }
-                composable("${Screen.Station.route}/{stationId}") { backStackEntry ->
-                    StationScreen(
-                        navController = navController,
-                        stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
-                    )
-                }
-                composable(Screen.Booking.route) { BookingScreen(navController) }
-                composable("${Screen.Directions.route}/{stationId}") { backStackEntry ->
-                    DirectionsScreen(
-                        navController = navController,
-                        stationId = requireNotNull(backStackEntry.arguments?.getString("stationId")),
-                    )
-                }
+                stationGraph(navController = navController)
                 composable(Screen.MyBookings.route) { MyBookingsScreen(navController) }
                 composable(Screen.Settings.route) { SettingsScreen(navController) }
                 composable(Screen.Saved.route) { SavedScreen(navController) }
@@ -47,13 +33,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-enum class Screen(val route: String) {
-    Home("home"),
-    Station("station"),
-    Booking("booking"),
-    Directions("directions"),
-    MyBookings("myBookings"),
-    Saved("saved"),
-    Settings("settings"),
-    My("My"),
+sealed class Screen(val route: String) {
+    object Home : Screen("home")
+    object Station : Screen("station/{stationId}") {
+        fun createRoute(id: String): String {
+            return "station/$id"
+        }
+    }
+
+    object MyBookings : Screen("myBookings")
+    object Saved : Screen("saved")
+    object Settings : Screen("settings")
+    object My : Screen("My")
 }
