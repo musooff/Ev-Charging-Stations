@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -76,6 +77,8 @@ import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Filter
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.Loading
+import com.titicorp.evcs.utils.model.WindowSizeClass
+import com.titicorp.evcs.utils.model.WindowSizeClass.Companion.calculateWindowSizeClass
 import kotlinx.coroutines.launch
 
 @Composable
@@ -189,9 +192,10 @@ private fun Content(
     drawerState: DrawerState,
     viewModel: HomeViewModel,
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
     ) {
+        val windowSizeClass = calculateWindowSizeClass(maxWidth)
         val uiState by viewModel.uiState.collectAsState()
         when (val state = uiState) {
             HomeViewModel.UiState.Loading -> {
@@ -241,6 +245,7 @@ private fun Content(
                         .padding(bottom = 20.dp),
                     stations = state.data,
                     selected = currentStation,
+                    windowSizeClass = windowSizeClass,
                     onItemClick = {
                         navController.navigate(Screen.Station.createRoute(currentStation.id))
                     },
@@ -347,6 +352,7 @@ private fun StationLayout(
     modifier: Modifier = Modifier,
     stations: List<Station>,
     selected: Station,
+    windowSizeClass: WindowSizeClass,
     onItemClick: (Station) -> Unit,
     onItemFocus: (Station) -> Unit,
 ) {
@@ -368,11 +374,14 @@ private fun StationLayout(
     HorizontalPager(
         modifier = modifier,
         state = pagerState,
-        contentPadding = PaddingValues(horizontal = 60.dp),
+        contentPadding = PaddingValues(horizontal = if (windowSizeClass == WindowSizeClass.Compact) 60.dp else 150.dp),
         pageSpacing = 20.dp,
     ) { page ->
         val station = stations[page]
-        StationItem(station = station) {
+        StationItem(
+            station = station,
+            windowSizeClass = windowSizeClass,
+        ) {
             onItemClick(station)
         }
     }
@@ -381,6 +390,7 @@ private fun StationLayout(
 @Composable
 private fun StationItem(
     station: Station,
+    windowSizeClass: WindowSizeClass,
     onClick: () -> Unit,
 ) {
     Column(
@@ -394,7 +404,7 @@ private fun StationItem(
             modifier = Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(if (windowSizeClass == WindowSizeClass.Compact) 80.dp else 200.dp)
                 .background(MaterialTheme.colorScheme.secondaryContainer),
             model = station.thumbnail,
             contentScale = ContentScale.Crop,
