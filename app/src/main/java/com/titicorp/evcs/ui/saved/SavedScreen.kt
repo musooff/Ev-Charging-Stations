@@ -1,6 +1,5 @@
 package com.titicorp.evcs.ui.saved
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,12 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.titicorp.evcs.R
+import coil.compose.AsyncImage
 import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.ScreenTitle
@@ -107,19 +105,19 @@ private fun ToolbarLayout(navController: NavController) {
 }
 
 @Composable
-private fun SavedItem(navController: NavController, station: Station = Station.byId()) {
+private fun SavedItem(navController: NavController, station: Station) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp),
         ) {
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .size(80.dp)
                     .background(MaterialTheme.colorScheme.secondaryContainer),
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                model = station.thumbnail,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )

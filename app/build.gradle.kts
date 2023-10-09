@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.constraint.layout.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     implementation(libs.hilt.core)
     implementation(libs.hilt.navigation.compose)

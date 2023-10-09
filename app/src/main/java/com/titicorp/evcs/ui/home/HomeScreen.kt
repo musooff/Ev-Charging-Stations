@@ -64,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -388,13 +389,13 @@ private fun StationItem(
             .background(MaterialTheme.colorScheme.surface)
             .padding(10.dp),
     ) {
-        Image(
+        AsyncImage(
             modifier = Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth()
                 .height(80.dp)
                 .background(MaterialTheme.colorScheme.secondaryContainer),
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            model = station.thumbnail,
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )

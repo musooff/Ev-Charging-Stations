@@ -1,6 +1,5 @@
 package com.titicorp.evcs.ui.station.details
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,13 +45,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import com.titicorp.evcs.R
+import coil.compose.AsyncImage
 import com.titicorp.evcs.model.StationDetails
 import com.titicorp.evcs.ui.station.StationScreen
 import com.titicorp.evcs.ui.station.StationViewModel
@@ -137,11 +135,11 @@ private fun AppBarLayout(
             .fillMaxWidth()
             .height(300.dp),
     ) {
-        Image(
+        AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.secondaryContainer),
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            model = details.thumbnail,
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )
@@ -149,7 +147,7 @@ private fun AppBarLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .height(50.dp)
+                .height(30.dp)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surface),
