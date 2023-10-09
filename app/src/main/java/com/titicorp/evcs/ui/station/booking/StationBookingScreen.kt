@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -35,7 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import com.titicorp.evcs.Screen
 import com.titicorp.evcs.ui.station.StationScreen
-import com.titicorp.evcs.utils.composables.ScreenTitle
+import com.titicorp.evcs.utils.composables.TopBarTitle
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,25 +150,24 @@ fun StationBookingScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ToolbarLayout(navController: NavController) {
-    Row(
-        modifier = Modifier
-            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(
-            onClick = {
-                navController.navigateUp()
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = null,
-            )
-        }
-        ScreenTitle("Booking")
-    }
+    TopAppBar(
+        title = { TopBarTitle("Booking") },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navController.navigateUp()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+    )
 }
 
 @Composable

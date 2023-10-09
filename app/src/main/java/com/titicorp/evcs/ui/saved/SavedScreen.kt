@@ -25,12 +25,14 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,9 +48,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.titicorp.evcs.Screen
 import com.titicorp.evcs.model.Station
-import com.titicorp.evcs.utils.composables.ScreenTitle
 import com.titicorp.evcs.utils.composables.Status
 import com.titicorp.evcs.utils.composables.StatusItem
+import com.titicorp.evcs.utils.composables.TopBarTitle
 
 @Composable
 fun SavedScreen(
@@ -76,32 +78,35 @@ fun SavedScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ToolbarLayout(navController: NavController) {
-    Row(
-        modifier = Modifier
-            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(
-            onClick = {
-                navController.navigateUp()
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = null,
-            )
-        }
-        ScreenTitle("Saved")
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-            )
-        }
-    }
+    TopAppBar(
+        title = {
+            TopBarTitle("Saved")
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    navController.navigateUp()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                )
+            }
+        },
+
+    )
 }
 
 @Composable
