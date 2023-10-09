@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -48,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -69,7 +69,10 @@ fun StationDetailsScreen(
         var currentTab by remember {
             mutableStateOf(Tab.Info)
         }
-        LazyColumn {
+        val lazyListState = rememberLazyListState()
+        LazyColumn(
+            state = lazyListState,
+        ) {
             item {
                 AppBarLayout(state.data)
             }
@@ -89,7 +92,7 @@ fun StationDetailsScreen(
 
             item {
                 when (currentTab) {
-                    Tab.Info -> InfoLayout()
+                    Tab.Info -> InfoLayout(state.data.description)
                     Tab.Chargers -> ChargersLayout()
                     Tab.Reviews -> Reviews()
                 }
@@ -332,7 +335,7 @@ private fun TabItem(
 }
 
 @Composable
-private fun InfoLayout() {
+private fun InfoLayout(description: String) {
     Column(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp),
@@ -343,7 +346,7 @@ private fun InfoLayout() {
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = LoremIpsum(100).values.first().toString(),
+            text = description,
             style = MaterialTheme.typography.bodyLarge,
         )
     }
