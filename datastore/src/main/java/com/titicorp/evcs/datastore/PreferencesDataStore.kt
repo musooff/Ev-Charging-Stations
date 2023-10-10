@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
@@ -22,6 +23,10 @@ class PreferencesDataStore @Inject constructor(
 
     fun getUserName(): Flow<String> {
         return dataStore.data.mapNotNull { it[userNamePreferences] }
+    }
+
+    fun isLoggedIn(): Flow<Boolean> {
+        return dataStore.data.map { it.contains(userNamePreferences) }
     }
 
     companion object {

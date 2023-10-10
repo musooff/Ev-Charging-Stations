@@ -33,4 +33,8 @@ class UserRepository @Inject constructor(
     suspend fun getUserName(): String {
         return dataStore.getUserName().first()
     }
+
+    suspend fun isLoggedIn(): Boolean {
+        return dataStore.isLoggedIn().first()
+    }
 }
