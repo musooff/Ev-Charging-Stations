@@ -3,11 +3,11 @@ package com.titicorp.evcs.domain
 import com.titicorp.evcs.data.repository.UserRepository
 import javax.inject.Inject
 
-class LoginUseCase @Inject constructor(
+class GetUserNameUseCase @Inject constructor(
     private val userRepository: UserRepository,
 ) {
 
-    suspend operator fun invoke(phoneNumber: String, password: String) {
-        return userRepository.login(phoneNumber, password)
+    suspend operator fun invoke(): String {
+        return userRepository.getUserName()
     }
 }

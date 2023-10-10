@@ -53,7 +53,7 @@ class RegisterViewModel @Inject constructor(
         }
         loggingJob?.cancel()
         loggingJob = viewModelScope.launch {
-            val user = registerUseCase(
+            registerUseCase(
                 name = uiState.value.name,
                 phoneNumber = uiState.value.phoneNumber,
                 password = uiState.value.password,

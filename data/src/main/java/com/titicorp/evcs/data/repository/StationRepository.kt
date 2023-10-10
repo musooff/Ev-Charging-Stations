@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class StationRepository @Inject constructor(
@@ -14,8 +15,8 @@ class StationRepository @Inject constructor(
     private val api: NetworkApi,
 ) {
 
-    fun getNearbyStations(): Flow<List<Station>> = flow {
-        emit(
+    suspend fun getNearbyStations(): List<Station> =
+        withContext(ioDispatcher) {
             api.getNearbyStations()
                 .map {
                     Station(
@@ -26,9 +27,8 @@ class StationRepository @Inject constructor(
                         lng = it.lng,
                         thumbnail = it.thumbnail,
                     )
-                },
-        )
-    }.flowOn(ioDispatcher)
+                }
+        }
 
     fun getSavedStations(): Flow<List<Station>> = flow {
         emit(

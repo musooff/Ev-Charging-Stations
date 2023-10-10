@@ -3,31 +3,39 @@ package com.titicorp.evcs.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.titicorp.evcs.domain.GetNearbyStationsUseCase
+import com.titicorp.evcs.domain.GetUserNameUseCase
 import com.titicorp.evcs.model.Station
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    nearbyStationsUseCase: GetNearbyStationsUseCase,
+    private val getNearbyStationsUseCase: GetNearbyStationsUseCase,
+    private val getUserNameUseCase: GetUserNameUseCase,
 ) : ViewModel() {
 
-    val uiState: StateFlow<UiState> = nearbyStationsUseCase()
-        .map { UiState.Stations(it) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState.Loading,
-        )
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    val uiState: StateFlow<UiState> = _uiState
+
+    init {
+        viewModelScope.launch {
+            val userName = getUserNameUseCase()
+            val stations = getNearbyStationsUseCase()
+            _uiState.value = UiState.Success(
+                name = userName,
+                stations = stations,
+            )
+        }
+    }
 
     sealed interface UiState {
         object Loading : UiState
-        data class Stations(
-            val data: List<Station>,
+        data class Success(
+            val name: String,
+            val stations: List<Station>,
         ) : UiState
     }
 }

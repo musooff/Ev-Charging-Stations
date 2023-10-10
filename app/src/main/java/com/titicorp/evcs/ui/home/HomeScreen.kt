@@ -113,7 +113,7 @@ private fun DrawerSheet(
         modifier = Modifier
             .width(320.dp),
     ) {
-        GreetingLayout()
+        GreetingLayout("Thomas")
         Spacer(modifier = Modifier.height(20.dp))
         NavigationDrawerItem(
             label = {
@@ -202,9 +202,9 @@ private fun Content(
                 Loading()
             }
 
-            is HomeViewModel.UiState.Stations -> {
+            is HomeViewModel.UiState.Success -> {
                 var currentStation: Station by remember {
-                    mutableStateOf(state.data.first())
+                    mutableStateOf(state.stations.first())
                 }
                 Column {
                     val scope = rememberCoroutineScope()
@@ -218,7 +218,7 @@ private fun Content(
                             navController.navigate(Screen.My.route)
                         },
                     )
-                    GreetingLayout()
+                    GreetingLayout(state.name)
 
                     var currentFilter by remember {
                         mutableStateOf(Filter.Nearby)
@@ -232,7 +232,7 @@ private fun Content(
                     }
 
                     MapLayout(
-                        stations = state.data,
+                        stations = state.stations,
                         selected = currentStation,
                         onItemClick = {
                             currentStation = it
@@ -243,7 +243,7 @@ private fun Content(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 20.dp),
-                    stations = state.data,
+                    stations = state.stations,
                     selected = currentStation,
                     windowSizeClass = windowSizeClass,
                     onItemClick = {
@@ -292,7 +292,7 @@ private fun ToolbarLayout(
 }
 
 @Composable
-private fun GreetingLayout() {
+private fun GreetingLayout(name: String) {
     Text(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp),
@@ -302,7 +302,7 @@ private fun GreetingLayout() {
     Text(
         modifier = Modifier
             .padding(start = 20.dp),
-        text = "Thomas Shelby",
+        text = name,
         style = MaterialTheme.typography.headlineSmall,
     )
 }

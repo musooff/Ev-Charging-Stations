@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor(
         }
         loggingJob?.cancel()
         loggingJob = viewModelScope.launch {
-            val user = loginUseCase(
+            loginUseCase(
                 phoneNumber = uiState.value.phoneNumber,
                 password = uiState.value.password,
             )

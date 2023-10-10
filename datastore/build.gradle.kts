@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.titicorp.evcs.data"
+    namespace = "com.titicorp.evcs.datastore"
     compileSdk = 33
 
     defaultConfig {
@@ -33,12 +33,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.network)
-    implementation(projects.datastore)
-    implementation(projects.model)
-    implementation(projects.common)
+
     implementation(libs.hilt.core)
-    implementation(libs.core.ktx)
+    implementation(libs.datastore)
 
     kapt(libs.hilt.compiler)
 }
