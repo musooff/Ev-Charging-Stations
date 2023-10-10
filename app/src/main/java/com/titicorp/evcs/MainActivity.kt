@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.titicorp.evcs.ui.auth.authGraph
 import com.titicorp.evcs.ui.home.HomeScreen
 import com.titicorp.evcs.ui.my.MyScreen
 import com.titicorp.evcs.ui.mybookings.MyBookingsScreen
@@ -21,9 +22,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = Screen.Home.route) {
+            NavHost(navController = navController, startDestination = Screen.Auth.route) {
+                authGraph(navController)
                 composable(Screen.Home.route) { HomeScreen(navController) }
-                stationGraph(navController = navController)
+                stationGraph(navController)
                 composable(Screen.MyBookings.route) { MyBookingsScreen(navController) }
                 composable(Screen.Settings.route) { SettingsScreen(navController) }
                 composable(Screen.Saved.route) { SavedScreen(navController) }
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class Screen(val route: String) {
+    object Auth : Screen("auth")
     object Home : Screen("home")
     object Station : Screen("station/{stationId}") {
         fun createRoute(id: String): String {

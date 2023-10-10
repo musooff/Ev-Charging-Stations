@@ -2,6 +2,8 @@ package com.titicorp.evcs.network
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.titicorp.evcs.network.model.Auth
 import com.titicorp.evcs.network.model.NetworkStation
 import com.titicorp.evcs.network.model.NetworkStationDetails
 import okhttp3.Interceptor
@@ -39,6 +41,21 @@ class NetworkApi @Inject constructor() {
     suspend fun getSavedStations(): List<NetworkStation> = service.getSavedStations()
 
     suspend fun getStationDetails(id: String): NetworkStationDetails = service.getStationDetails(id = id)
+
+    suspend fun login(phoneNumber: String, password: String) = service.login(
+        body = Auth.LoginRequest(
+            phoneNumber = phoneNumber,
+            password = password,
+        ),
+    )
+
+    suspend fun register(name: String, phoneNumber: String, password: String) = service.register(
+        body = Auth.RegisterRequest(
+            name = name,
+            phoneNumber = phoneNumber,
+            password = password,
+        ),
+    )
 }
 
 private const val BASE_URL = "https://google.com"
@@ -98,6 +115,14 @@ private class MockInterceptor : Interceptor {
         Thread.sleep(1_000)
         val url = chain.request().url
         val body = when (url.encodedPath) {
+            "/auth/login", "/auth/register" -> {
+                val user = JsonObject().apply {
+                    addProperty("phoneNumber", "010111222")
+                    addProperty("name", "Thomas Shelby")
+                }
+                user.toString()
+            }
+
             "/stations/nearby" -> stations
             "/stations/saved" -> stations
             else -> {

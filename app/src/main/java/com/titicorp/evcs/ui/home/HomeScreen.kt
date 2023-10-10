@@ -151,6 +151,7 @@ private fun DrawerSheet(
                 navController.navigate(Screen.Saved.route)
             },
         )
+        Spacer(modifier = Modifier.weight(1f))
         NavigationDrawerItem(
             label = {
                 Text(
@@ -169,7 +170,6 @@ private fun DrawerSheet(
                 navController.navigate(Screen.Settings.route)
             },
         )
-        Spacer(modifier = Modifier.weight(1f))
         NavigationDrawerItem(
             label = {
                 Text(
