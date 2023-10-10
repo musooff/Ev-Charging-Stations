@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.titicorp.evcs.domain.GetNearbyStationsUseCase
 import com.titicorp.evcs.domain.GetUserNameUseCase
+import com.titicorp.evcs.domain.LogOutUseCase
 import com.titicorp.evcs.model.Station
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getNearbyStationsUseCase: GetNearbyStationsUseCase,
     private val getUserNameUseCase: GetUserNameUseCase,
+    private val logOutUseCase: LogOutUseCase,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
@@ -31,11 +33,20 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun logOut() {
+        viewModelScope.launch {
+            logOutUseCase()
+            _uiState.value = UiState.LogOut
+        }
+    }
+
     sealed interface UiState {
         object Loading : UiState
         data class Success(
             val name: String,
             val stations: List<Station>,
         ) : UiState
+
+        object LogOut : UiState
     }
 }

@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import coil.compose.AsyncImage
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -99,6 +100,7 @@ fun HomeScreen(
                 drawerContent = {
                     DrawerSheet(
                         navController = navController,
+                        viewModel = viewModel,
                         state = state,
                         drawerState = drawerState,
                     )
@@ -113,12 +115,24 @@ fun HomeScreen(
                 },
             )
         }
+
+        is HomeViewModel.UiState.LogOut -> {
+            LaunchedEffect(Unit) {
+                navController.navigate(
+                    route = Screen.Auth.route,
+                    navOptions = navOptions {
+                        popUpTo(navController.graph.id)
+                    },
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun DrawerSheet(
     navController: NavController,
+    viewModel: HomeViewModel,
     state: HomeViewModel.UiState.Success,
     drawerState: DrawerState,
 ) {
@@ -187,7 +201,7 @@ private fun DrawerSheet(
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = "Sign Out",
+                    text = "Log Out",
                     style = MaterialTheme.typography.titleMedium,
                 )
             },
@@ -195,7 +209,7 @@ private fun DrawerSheet(
                 Icon(imageVector = Icons.Default.Close, contentDescription = null)
             },
             selected = false,
-            onClick = { /*TODO*/ },
+            onClick = viewModel::logOut,
         )
     }
 }

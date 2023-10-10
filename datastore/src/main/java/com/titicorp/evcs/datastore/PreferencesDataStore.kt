@@ -29,6 +29,12 @@ class PreferencesDataStore @Inject constructor(
         return dataStore.data.map { it.contains(userNamePreferences) }
     }
 
+    suspend fun removeUser() {
+        dataStore.edit {
+            it.remove(userNamePreferences)
+        }
+    }
+
     companion object {
         private const val USER_NAME = "user_name"
     }

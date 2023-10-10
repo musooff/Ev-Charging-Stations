@@ -37,4 +37,8 @@ class UserRepository @Inject constructor(
     suspend fun isLoggedIn(): Boolean {
         return dataStore.isLoggedIn().first()
     }
+
+    suspend fun logOut() {
+        dataStore.removeUser()
+    }
 }
