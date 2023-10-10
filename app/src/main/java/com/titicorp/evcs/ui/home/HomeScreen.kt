@@ -86,26 +86,40 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerSheet(navController = navController, drawerState = drawerState)
-        },
-        gesturesEnabled = drawerState.isOpen,
-        content = {
-            Content(
-                navController = navController,
+    val uiState by viewModel.uiState.collectAsState()
+    when (val state = uiState) {
+        HomeViewModel.UiState.Loading -> {
+            Loading()
+        }
+
+        is HomeViewModel.UiState.Success -> {
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            ModalNavigationDrawer(
                 drawerState = drawerState,
-                viewModel = viewModel,
+                drawerContent = {
+                    DrawerSheet(
+                        navController = navController,
+                        state = state,
+                        drawerState = drawerState,
+                    )
+                },
+                gesturesEnabled = drawerState.isOpen,
+                content = {
+                    Content(
+                        navController = navController,
+                        drawerState = drawerState,
+                        state = state,
+                    )
+                },
             )
-        },
-    )
+        }
+    }
 }
 
 @Composable
 private fun DrawerSheet(
     navController: NavController,
+    state: HomeViewModel.UiState.Success,
     drawerState: DrawerState,
 ) {
     val scope = rememberCoroutineScope()
@@ -113,7 +127,7 @@ private fun DrawerSheet(
         modifier = Modifier
             .width(320.dp),
     ) {
-        GreetingLayout("Thomas")
+        GreetingLayout(state.name)
         Spacer(modifier = Modifier.height(20.dp))
         NavigationDrawerItem(
             label = {
@@ -190,71 +204,62 @@ private fun DrawerSheet(
 private fun Content(
     navController: NavController,
     drawerState: DrawerState,
-    viewModel: HomeViewModel,
+    state: HomeViewModel.UiState.Success,
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
     ) {
         val windowSizeClass = calculateWindowSizeClass(maxWidth)
-        val uiState by viewModel.uiState.collectAsState()
-        when (val state = uiState) {
-            HomeViewModel.UiState.Loading -> {
-                Loading()
-            }
-
-            is HomeViewModel.UiState.Success -> {
-                var currentStation: Station by remember {
-                    mutableStateOf(state.stations.first())
-                }
-                Column {
-                    val scope = rememberCoroutineScope()
-                    ToolbarLayout(
-                        onMenuClick = {
-                            scope.launch {
-                                drawerState.open()
-                            }
-                        },
-                        onMyClick = {
-                            navController.navigate(Screen.My.route)
-                        },
-                    )
-                    GreetingLayout(state.name)
-
-                    var currentFilter by remember {
-                        mutableStateOf(Filter.Nearby)
-                    }
-                    FilterLayout(
-                        modifier = Modifier
-                            .padding(top = 20.dp),
-                        selected = currentFilter,
-                    ) {
-                        currentFilter = it
-                    }
-
-                    MapLayout(
-                        stations = state.stations,
-                        selected = currentStation,
-                        onItemClick = {
-                            currentStation = it
-                        },
-                    )
-                }
-                StationLayout(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp),
-                    stations = state.stations,
-                    selected = currentStation,
-                    windowSizeClass = windowSizeClass,
-                    onItemClick = {
-                        navController.navigate(Screen.Station.createRoute(currentStation.id))
-                    },
-                    onItemFocus = {
-                        currentStation = it
-                    },
-                )
-            }
+        var currentStation: Station by remember {
+            mutableStateOf(state.stations.first())
         }
+        Column {
+            val scope = rememberCoroutineScope()
+            ToolbarLayout(
+                onMenuClick = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                },
+                onMyClick = {
+                    navController.navigate(Screen.My.route)
+                },
+            )
+            GreetingLayout(state.name)
+
+            var currentFilter by remember {
+                mutableStateOf(Filter.Nearby)
+            }
+            FilterLayout(
+                modifier = Modifier
+                    .padding(top = 20.dp),
+                selected = currentFilter,
+            ) {
+                currentFilter = it
+            }
+
+            MapLayout(
+                stations = state.stations,
+                selected = currentStation,
+                onItemClick = {
+                    currentStation = it
+                },
+            )
+        }
+        StationLayout(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp),
+            stations = state.stations,
+            selected = currentStation,
+            windowSizeClass = windowSizeClass,
+            onItemClick = {
+                navController.navigate(Screen.Station.createRoute(currentStation.id))
+            },
+            onItemFocus = {
+                currentStation = it
+            },
+        )
     }
 }
 
