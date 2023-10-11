@@ -5,10 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -50,35 +54,60 @@ fun StationBookingScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             ToolbarLayout(navController)
-            LazyColumn(
-                modifier = Modifier
-                    .padding(top = 20.dp),
-                contentPadding = PaddingValues(bottom = 50.dp),
+            var selectedTime: Int? by remember {
+                mutableStateOf(null)
+            }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                item {
-                    DatePicker(
-                        state = rememberDatePickerState(),
-                        title = {
-                            Text(
-                                modifier = Modifier
-                                    .padding(start = 20.dp),
-                                text = "Select Date",
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        },
-                        showModeToggle = false,
-                    )
+                item(span = { GridItemSpan(3) }) {
+                    Column {
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 20.dp),
+                            text = "Select Date",
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        DatePicker(
+                            state = rememberDatePickerState(),
+                            title = null,
+                            headline = null,
+                            showModeToggle = false,
+                            dateValidator = { it >= System.currentTimeMillis() },
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 20.dp),
+                            text = "Select Time",
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
-                item {
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 20.dp),
-                        text = "Select Time",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                item {
-                    TimePickerLayout()
+                val timeRange = 6..20
+                for (time in timeRange) {
+                    item {
+                        TimePickerItem(
+                            modifier = Modifier
+                                .padding(
+                                    start = when (time.mod(3)) {
+                                        0 -> 20.dp
+                                        1 -> 10.dp
+                                        else -> 0.dp
+                                    },
+                                    end = when (time.mod(3)) {
+                                        2 -> 20.dp
+                                        1 -> 10.dp
+                                        else -> 0.dp
+                                    },
+                                ),
+                            time = time,
+                            selected = selectedTime == time,
+                        ) {
+                            selectedTime = time
+                        }
+                    }
                 }
             }
         }
@@ -171,51 +200,8 @@ private fun ToolbarLayout(navController: NavController) {
 }
 
 @Composable
-private fun TimePickerLayout() {
-    Column(
-        modifier = Modifier
-            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
-    ) {
-        var selectedTime: Int? by remember {
-            mutableStateOf(null)
-        }
-        for (time in 6..20 step 3) {
-            TimePickerRow(
-                from = time,
-                to = time + 2,
-                selectedTime = selectedTime,
-            ) {
-                selectedTime = it
-            }
-        }
-    }
-}
-
-@Composable
-private fun TimePickerRow(
-    from: Int,
-    to: Int,
-    selectedTime: Int?,
-    onItemClicked: (Int) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        for (time in from..to) {
-            TimePickerItem(
-                time = time,
-                selected = time == selectedTime,
-            ) {
-                onItemClicked(time)
-            }
-        }
-    }
-}
-
-@Composable
 private fun TimePickerItem(
+    modifier: Modifier = Modifier,
     time: Int,
     selected: Boolean,
     onClick: () -> Unit,
@@ -229,13 +215,17 @@ private fun TimePickerItem(
     }
     if (selected) {
         Button(
+            modifier = modifier,
             onClick = onClick,
+            contentPadding = PaddingValues(0.dp),
         ) {
             content()
         }
     } else {
         OutlinedButton(
+            modifier = modifier,
             onClick = onClick,
+            contentPadding = PaddingValues(0.dp),
         ) {
             content()
         }
