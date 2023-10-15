@@ -1,5 +1,9 @@
 package com.titicorp.evcs.data.repository
 
+import com.titicorp.evcs.data.repository.utils.toBooking
+import com.titicorp.evcs.data.repository.utils.toStation
+import com.titicorp.evcs.data.repository.utils.toStationDetails
+import com.titicorp.evcs.model.Booking
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.model.StationDetails
 import com.titicorp.evcs.network.NetworkApi
@@ -15,52 +19,26 @@ class StationRepository @Inject constructor(
     private val api: NetworkApi,
 ) {
 
-    suspend fun getNearbyStations(): List<Station> =
+    suspend fun getStations(): List<Station> =
         withContext(ioDispatcher) {
-            api.getNearbyStations()
-                .map {
-                    Station(
-                        id = it.id,
-                        title = it.title,
-                        address = it.address,
-                        lat = it.lat,
-                        lng = it.lng,
-                        thumbnail = it.thumbnail,
-                    )
-                }
+            api.getStations()
+                .map { it.toStation }
         }
 
-    fun getSavedStations(): Flow<List<Station>> = flow {
-        emit(
+    suspend fun getSavedStations(): List<Station> =
+        withContext(ioDispatcher) {
             api.getSavedStations()
-                .map {
-                    Station(
-                        id = it.id,
-                        title = it.title,
-                        address = it.address,
-                        lat = it.lat,
-                        lng = it.lng,
-                        thumbnail = it.thumbnail,
-                    )
-                },
-        )
-    }.flowOn(ioDispatcher)
+                .map { it.toStation }
+        }
+
+    suspend fun getMyBookings(): List<Booking> =
+        withContext(ioDispatcher) {
+            api.getMyBookings().map { it.toBooking }
+        }
 
     fun getStationDetails(id: String): Flow<StationDetails> = flow {
         emit(
-            api.getStationDetails(id).run {
-                StationDetails(
-                    id = this.id,
-                    title = this.title,
-                    description = this.description,
-                    address = this.address,
-                    lat = this.lat,
-                    lng = this.lng,
-                    thumbnail = this.thumbnail,
-                    chargers = this.chargers,
-                    reviews = this.reviews,
-                )
-            },
+            api.getStationDetails(id).toStationDetails,
         )
     }.flowOn(ioDispatcher)
 }

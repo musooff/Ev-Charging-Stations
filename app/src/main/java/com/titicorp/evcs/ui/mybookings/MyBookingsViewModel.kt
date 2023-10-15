@@ -2,8 +2,8 @@ package com.titicorp.evcs.ui.mybookings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.titicorp.evcs.domain.GetNearbyStationsUseCase
-import com.titicorp.evcs.model.Station
+import com.titicorp.evcs.domain.GetMyBookingsUseCase
+import com.titicorp.evcs.model.Booking
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,15 +12,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyBookingsViewModel @Inject constructor(
-    getNearbyStationsUseCase: GetNearbyStationsUseCase,
+    getMyBookingsUseCase: GetMyBookingsUseCase,
 ) : ViewModel() {
 
-    private val _stations: MutableStateFlow<List<Station>> = MutableStateFlow(emptyList())
-    val stations: StateFlow<List<Station>> = _stations
+    private val _bookings: MutableStateFlow<List<Booking>> = MutableStateFlow(emptyList())
+    val bookings: StateFlow<List<Booking>> = _bookings
 
     init {
         viewModelScope.launch {
-            _stations.value = getNearbyStationsUseCase()
+            _bookings.value = getMyBookingsUseCase()
         }
     }
 }

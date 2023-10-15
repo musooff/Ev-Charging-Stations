@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,16 +40,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.titicorp.evcs.Screen
+import com.titicorp.evcs.model.Charger
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.Status
 import com.titicorp.evcs.utils.composables.StatusItem
 import com.titicorp.evcs.utils.composables.TopBarTitle
+import com.titicorp.evcs.utils.model.icon
 
 @Composable
 fun SavedScreen(
@@ -199,34 +201,34 @@ private fun SavedItem(navController: NavController, station: Station) {
             )
             Spacer(modifier = Modifier.weight(1f))
             StatusItem(
-                status = if (station.title.startsWith("Second")) Status.InUse else Status.Available,
+                status = if (station.title.startsWith("Exxon")) Status.InUse else Status.Available,
             )
         }
-        ChargersLayout()
+        ChargersLayout(station.chargers)
         Spacer(modifier = Modifier.height(10.dp))
         ActionLayout(navController = navController, stationId = station.id)
     }
 }
 
 @Composable
-private fun ChargersLayout() {
+private fun ChargersLayout(chargers: List<Charger>) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            repeat(3) {
+            chargers.forEach {
                 Icon(
-                    imageVector = Icons.Outlined.Info,
+                    painter = painterResource(id = it.icon),
                     contentDescription = null,
                 )
             }
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = "3 Chargers",
+            text = "${chargers.size} Chargers",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.secondary,
         )

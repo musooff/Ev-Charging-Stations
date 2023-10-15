@@ -2,7 +2,7 @@ package com.titicorp.evcs.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.titicorp.evcs.domain.GetNearbyStationsUseCase
+import com.titicorp.evcs.domain.GetStationsUseCase
 import com.titicorp.evcs.domain.GetUserNameUseCase
 import com.titicorp.evcs.domain.LogOutUseCase
 import com.titicorp.evcs.model.Station
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getNearbyStationsUseCase: GetNearbyStationsUseCase,
+    private val getStationsUseCase: GetStationsUseCase,
     private val getUserNameUseCase: GetUserNameUseCase,
     private val logOutUseCase: LogOutUseCase,
 ) : ViewModel() {
@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val userName = getUserNameUseCase()
-            val stations = getNearbyStationsUseCase()
+            val stations = getStationsUseCase()
             _uiState.value = UiState.Success(
                 name = userName,
                 stations = stations,

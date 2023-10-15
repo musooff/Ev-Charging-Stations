@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -49,14 +48,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.titicorp.evcs.model.Charger
 import com.titicorp.evcs.model.StationDetails
 import com.titicorp.evcs.ui.station.StationScreen
 import com.titicorp.evcs.ui.station.StationViewModel
+import com.titicorp.evcs.utils.model.icon
 
 @Composable
 fun StationDetailsScreen(
@@ -93,7 +95,7 @@ fun StationDetailsScreen(
             item {
                 when (currentTab) {
                     Tab.Info -> InfoLayout(state.data.description)
-                    Tab.Chargers -> ChargersLayout()
+                    Tab.Chargers -> ChargersLayout(state.data.chargers)
                     Tab.Reviews -> Reviews()
                 }
             }
@@ -353,39 +355,29 @@ private fun InfoLayout(description: String) {
 }
 
 @Composable
-private fun ChargersLayout() {
+private fun ChargersLayout(chargers: List<Charger>) {
     Column(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp),
     ) {
-        ChargerItem()
-        Divider(
-            color = Color.LightGray,
-            thickness = 0.5.dp,
-        )
-        ChargerItem()
-        Divider(
-            color = Color.LightGray,
-            thickness = 0.5.dp,
-        )
-        ChargerItem()
-        Divider(
-            color = Color.LightGray,
-            thickness = 0.5.dp,
-        )
-        ChargerItem()
+        chargers.forEachIndexed { index, charger ->
+            ChargerItem(charger)
+            if (index != chargers.lastIndex) {
+                Divider()
+            }
+        }
     }
 }
 
 @Composable
-private fun ChargerItem() {
+private fun ChargerItem(charger: Charger) {
     Row(
         modifier = Modifier
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = Icons.Outlined.Info,
+            painter = painterResource(id = charger.icon),
             contentDescription = null,
         )
         Column(
@@ -394,7 +386,7 @@ private fun ChargerItem() {
                 .weight(1f),
         ) {
             Text(
-                text = "Tesla",
+                text = charger.name,
                 style = MaterialTheme.typography.bodySmall,
             )
             Row {

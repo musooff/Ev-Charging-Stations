@@ -8,6 +8,6 @@ data class StationDetails(
     val lat: Double,
     val lng: Double,
     val thumbnail: String?,
-    val chargers: List<String>,
+    val chargers: List<Charger>,
     val reviews: List<String>,
 )

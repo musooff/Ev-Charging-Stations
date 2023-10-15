@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,16 +43,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.titicorp.evcs.Screen
-import com.titicorp.evcs.model.Station
-import com.titicorp.evcs.utils.composables.Status
-import com.titicorp.evcs.utils.composables.StatusItem
+import com.titicorp.evcs.model.Booking
+import com.titicorp.evcs.utils.composables.Kind
+import com.titicorp.evcs.utils.composables.Label
 import com.titicorp.evcs.utils.composables.TopBarTitle
+import com.titicorp.evcs.utils.model.icon
 
 @Composable
 fun MyBookingsScreen(
@@ -78,13 +79,13 @@ fun MyBookingsScreen(
         )
         Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        val stations by viewModel.stations.collectAsState()
+        val bookings by viewModel.bookings.collectAsState()
         LazyColumn(
             contentPadding = PaddingValues(20.dp),
         ) {
-            itemsIndexed(stations) { index, item ->
+            itemsIndexed(bookings) { index, item ->
                 CompletedBooking(navController, item)
-                if (index != stations.size - 1) {
+                if (index != bookings.lastIndex) {
                     Divider(
                         modifier = Modifier.padding(vertical = 10.dp),
                     )
@@ -177,7 +178,8 @@ enum class Filter(val label: String) {
 }
 
 @Composable
-private fun CompletedBooking(navController: NavController, station: Station) {
+private fun CompletedBooking(navController: NavController, booking: Booking) {
+    val station = booking.station
     Column {
         Row(
             modifier = Modifier
@@ -248,18 +250,19 @@ private fun CompletedBooking(navController: NavController, station: Station) {
                 Text(text = "31 Jan 2023")
             }
             Spacer(modifier = Modifier.weight(1f))
-            StatusItem(
-                status = if (station.title.startsWith("Second")) Status.InUse else Status.Available,
+            Label(
+                kind = Kind.Info,
+                text = "Upcoming",
             )
         }
-        InfoLayout()
+        InfoLayout(booking)
         Spacer(modifier = Modifier.height(10.dp))
         ActionLayout(navController = navController, stationId = station.id)
     }
 }
 
 @Composable
-private fun InfoLayout() {
+private fun InfoLayout(booking: Booking) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -269,13 +272,13 @@ private fun InfoLayout() {
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Text(
-                text = "Tesla(Plug)",
+                text = booking.charger.name,
                 style = MaterialTheme.typography.bodySmall,
             )
             Icon(
                 modifier = Modifier
                     .size(16.dp),
-                imageVector = Icons.Outlined.Info,
+                painter = painterResource(id = booking.charger.icon),
                 contentDescription = null,
             )
         }
@@ -284,7 +287,7 @@ private fun InfoLayout() {
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Text(
-                text = "Tesla(Plug)",
+                text = "100 kW",
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
@@ -314,7 +317,7 @@ private fun InfoLayout() {
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
-                text = "$14.25",
+                text = "$${booking.amount}",
                 style = MaterialTheme.typography.labelMedium,
             )
         }

@@ -2,7 +2,7 @@ package com.titicorp.evcs.ui.saved
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.titicorp.evcs.domain.GetNearbyStationsUseCase
+import com.titicorp.evcs.domain.GetSavedStationsUseCase
 import com.titicorp.evcs.model.Station
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedViewModel @Inject constructor(
-    getNearbyStationsUseCase: GetNearbyStationsUseCase,
+    getSavedStationsUseCase: GetSavedStationsUseCase,
 ) : ViewModel() {
 
     private val _stations: MutableStateFlow<List<Station>> = MutableStateFlow(emptyList())
@@ -20,7 +20,7 @@ class SavedViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _stations.value = getNearbyStationsUseCase()
+            _stations.value = getSavedStationsUseCase()
         }
     }
 }

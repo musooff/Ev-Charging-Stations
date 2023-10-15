@@ -71,6 +71,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -90,8 +91,8 @@ import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.Loading
 import com.titicorp.evcs.utils.model.WindowSizeClass
 import com.titicorp.evcs.utils.model.WindowSizeClass.Companion.calculateWindowSizeClass
+import com.titicorp.evcs.utils.model.icon
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 @Composable
 fun HomeScreen(
@@ -451,15 +452,7 @@ private fun ChargerFilterBottomSheet(
 ) {
     val chargers = buildList {
         add(null)
-        repeat(5) {
-            add(
-                Charger(
-                    id = UUID.randomUUID().toString(),
-                    name = "Tesla",
-                    icon = "",
-                ),
-            )
-        }
+        addAll(Charger.All)
     }
     val scope = rememberCoroutineScope()
     ModalBottomSheet(
@@ -492,7 +485,11 @@ private fun ChargerFilterBottomSheet(
                     verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.CenterVertically),
                 ) {
                     if (it != null) {
-                        Icon(imageVector = Icons.Default.Info, contentDescription = null)
+                        Icon(
+                            modifier = Modifier.size(34.dp),
+                            painter = painterResource(id = it.icon),
+                            contentDescription = null,
+                        )
                     }
                     Text(text = it?.name ?: "Any", style = MaterialTheme.typography.labelMedium)
                 }

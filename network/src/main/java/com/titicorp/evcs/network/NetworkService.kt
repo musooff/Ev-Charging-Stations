@@ -1,6 +1,7 @@
 package com.titicorp.evcs.network
 
 import com.titicorp.evcs.network.model.Auth
+import com.titicorp.evcs.network.model.NetworkBooking
 import com.titicorp.evcs.network.model.NetworkStation
 import com.titicorp.evcs.network.model.NetworkStationDetails
 import retrofit2.http.Body
@@ -10,11 +11,14 @@ import retrofit2.http.Query
 
 interface NetworkService {
 
-    @GET("stations/nearby")
-    suspend fun getNearbyStations(): List<NetworkStation>
+    @GET("stations/all")
+    suspend fun getStations(): List<NetworkStation>
 
     @GET("stations/saved")
     suspend fun getSavedStations(): List<NetworkStation>
+
+    @GET("bookings")
+    suspend fun getMyBookings(): List<NetworkBooking>
 
     @GET("stations")
     suspend fun getStationDetails(

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.titicorp.evcs.network.model.Auth
+import com.titicorp.evcs.network.model.NetworkBooking
 import com.titicorp.evcs.network.model.NetworkStation
 import com.titicorp.evcs.network.model.NetworkStationDetails
 import okhttp3.Interceptor
@@ -17,6 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Singleton
 class NetworkApi @Inject constructor() {
@@ -36,9 +38,11 @@ class NetworkApi @Inject constructor() {
         .build()
         .create(NetworkService::class.java)
 
-    suspend fun getNearbyStations(): List<NetworkStation> = service.getNearbyStations()
+    suspend fun getStations(): List<NetworkStation> = service.getStations()
 
     suspend fun getSavedStations(): List<NetworkStation> = service.getSavedStations()
+
+    suspend fun getMyBookings(): List<NetworkBooking> = service.getMyBookings()
 
     suspend fun getStationDetails(id: String): NetworkStationDetails = service.getStationDetails(id = id)
 
@@ -110,6 +114,39 @@ private class MockInterceptor : Interceptor {
 
     """.trimIndent()
 
+    private val chargers = """
+        [
+            {
+                "id": "j1772",
+                "name": "J1772"
+            },
+            {
+                "id": "css+combo_1",
+                "name": "CSS (Combo 1)"
+            },
+            {
+                "id": "css_combo_2",
+                "name": "CSS (Combo 2)"
+            },
+            {
+                "id": "type_2",
+                "name": "Type 2"
+            },
+            {
+                "id": "chademo",
+                "name": "CHAdeMo"
+            },
+            {
+                "id": "tesla",
+                "name": "Tesla"
+            },
+            {
+                "id": "wall_outlet",
+                "name": "Wall outlet"
+            }
+        ]
+    """.trimIndent()
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val message = ""
         Thread.sleep(1_000)
@@ -123,17 +160,52 @@ private class MockInterceptor : Interceptor {
                 user.toString()
             }
 
-            "/stations/nearby" -> stations
-            "/stations/saved" -> stations
+            "/stations/all" -> {
+                val stations = Gson().fromJson(stations, JsonArray::class.java)
+                stations.map {
+                    it.asJsonObject.apply {
+                        add("chargers", randomChargers())
+                    }
+                }.toString()
+            }
+
+            "/stations/saved" -> {
+                val stations = Gson().fromJson(stations, JsonArray::class.java)
+                stations.map {
+                    it.asJsonObject.apply {
+                        add("chargers", randomChargers())
+                    }
+                }.toString()
+            }
+
+            "/bookings" -> {
+                val stations = Gson().fromJson(stations, JsonArray::class.java)
+                stations.map {
+                    it.asJsonObject.apply {
+                        add("chargers", randomChargers())
+                    }
+                }.toString()
+                stations.map {
+                    JsonObject().apply {
+                        add("station", it)
+                        add("charger", randomCharger())
+                        addProperty("amount", 14.25)
+                        addProperty("startedAt", 1697352023)
+                        addProperty("endAt", 1697355623)
+                    }
+                }.toString()
+            }
+
             else -> {
                 val id = url.queryParameter("id")
-                val stations = Gson().fromJson(stations, JsonArray::class.java).asJsonArray
-                val station = stations.first() {
+                val stations = Gson().fromJson(stations, JsonArray::class.java)
+                val station = stations.first {
                     it.asJsonObject.get("id").asString == id
                 }
                 station.asJsonObject.apply {
                     addProperty("description", description)
-                    add("chargers", JsonArray())
+                    val chargers = Gson().fromJson(chargers, JsonArray::class.java)
+                    add("chargers", chargers)
                     add("reviews", JsonArray())
                 }
                 station.toString()
@@ -146,5 +218,29 @@ private class MockInterceptor : Interceptor {
             .body(body)
             .message(message)
             .build()
+    }
+
+    private fun randomCharger(): JsonObject {
+        val chargers = Gson().fromJson(chargers, JsonArray::class.java)
+        val random = Random.nextInt(chargers.size())
+        return chargers.get(random).asJsonObject
+    }
+
+    private fun randomChargers(): JsonArray {
+        val chargers = Gson().fromJson(chargers, JsonArray::class.java)
+
+        val randomIndices = mutableSetOf<Int>()
+        val randomItems = JsonArray()
+
+        val chargerCount = Random.nextInt(2, 4)
+        while (randomIndices.size < chargerCount) {
+            val randomIndex = Random.nextInt(chargers.size())
+            randomIndices.add(randomIndex)
+        }
+
+        for (index in randomIndices) {
+            randomItems.add(chargers.get(index))
+        }
+        return randomItems
     }
 }

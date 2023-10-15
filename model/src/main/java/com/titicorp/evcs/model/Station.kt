@@ -7,4 +7,5 @@ data class Station(
     val lat: Double,
     val lng: Double,
     val thumbnail: String?,
+    val chargers: List<Charger>,
 )
