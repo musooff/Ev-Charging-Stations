@@ -2,6 +2,8 @@ package com.titicorp.evcs.ui.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -16,12 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -31,21 +37,25 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -75,12 +85,13 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.titicorp.evcs.Screen
-import com.titicorp.evcs.model.Filter
+import com.titicorp.evcs.model.Charger
 import com.titicorp.evcs.model.Station
 import com.titicorp.evcs.utils.composables.Loading
 import com.titicorp.evcs.utils.model.WindowSizeClass
 import com.titicorp.evcs.utils.model.WindowSizeClass.Companion.calculateWindowSizeClass
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @Composable
 fun HomeScreen(
@@ -214,6 +225,7 @@ private fun DrawerSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
     navController: NavController,
@@ -240,17 +252,10 @@ private fun Content(
                 },
             )
             GreetingLayout(state.name)
-
-            var currentFilter by remember {
-                mutableStateOf(Filter.Nearby)
-            }
             FilterLayout(
                 modifier = Modifier
                     .padding(top = 20.dp),
-                selected = currentFilter,
-            ) {
-                currentFilter = it
-            }
+            )
 
             MapLayout(
                 stations = state.stations,
@@ -326,43 +331,197 @@ private fun GreetingLayout(name: String) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FilterLayout(
     modifier: Modifier,
-    selected: Filter,
-    onItemClicked: (Filter) -> Unit,
 ) {
+    var availableNow by remember { mutableStateOf(false) }
+    var charger: Charger? by remember { mutableStateOf(null) }
+    var fastCharge by remember { mutableStateOf(false) }
+
+    val chargerFilterBottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
+    var showChargerFilterBottomSheet by remember { mutableStateOf(false) }
     LazyRow(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        items(Filter.All) {
-            FilterItem(
-                filter = it,
-                selected = it == selected,
-            ) {
-                onItemClicked(it)
+        item {
+            AvailableFilterChip(
+                selected = availableNow,
+                onClick = {
+                    availableNow = !availableNow
+                },
+            )
+        }
+        item {
+            ChargerFilterChip(
+                charger = charger,
+                onClick = {
+                    showChargerFilterBottomSheet = true
+                },
+            )
+        }
+        item {
+            FastChargerFilterChip(
+                selected = fastCharge,
+                onClick = {
+                    fastCharge = !fastCharge
+                },
+            )
+        }
+    }
+    if (showChargerFilterBottomSheet) {
+        ChargerFilterBottomSheet(
+            onDismissRequest = {
+                showChargerFilterBottomSheet = false
+            },
+            sheetState = chargerFilterBottomSheetState,
+            charger = charger,
+            onChargerClick = {
+                charger = it
+            },
+        )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun AvailableFilterChip(selected: Boolean, onClick: () -> Unit) {
+    FilterChip(
+        onClick = onClick,
+        label = {
+            Text("Available now")
+        },
+        selected = selected,
+        leadingIcon = if (selected) {
+            {
+                Icon(
+                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = null,
+                )
+            }
+        } else {
+            null
+        },
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ChargerFilterChip(charger: Charger?, onClick: () -> Unit) {
+    FilterChip(
+        onClick = onClick,
+        label = {
+            Text(charger?.name ?: "Charger type")
+        },
+        selected = charger != null,
+        leadingIcon = if (charger != null) {
+            {
+                Icon(
+                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = null,
+                )
+            }
+        } else {
+            null
+        },
+        trailingIcon = {
+            Icon(
+                modifier = Modifier.size(FilterChipDefaults.IconSize),
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = null,
+            )
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ChargerFilterBottomSheet(
+    onDismissRequest: () -> Unit,
+    sheetState: SheetState,
+    charger: Charger?,
+    onChargerClick: (Charger?) -> Unit,
+) {
+    val chargers = buildList {
+        add(null)
+        repeat(5) {
+            add(
+                Charger(
+                    id = UUID.randomUUID().toString(),
+                    name = "Tesla",
+                    icon = "",
+                ),
+            )
+        }
+    }
+    val scope = rememberCoroutineScope()
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismissRequest,
+    ) {
+        LazyVerticalGrid(
+            modifier = Modifier
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+            columns = GridCells.Fixed(3),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            items(chargers) {
+                Column(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clickable(
+                            onClick = {
+                                onChargerClick(it)
+                                scope.launch {
+                                    sheetState.hide()
+                                    onDismissRequest()
+                                }
+                            },
+                            interactionSource = MutableInteractionSource(),
+                            indication = rememberRipple(),
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.CenterVertically),
+                ) {
+                    if (it != null) {
+                        Icon(imageVector = Icons.Default.Info, contentDescription = null)
+                    }
+                    Text(text = it?.name ?: "Any", style = MaterialTheme.typography.labelMedium)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun FilterItem(
-    filter: Filter,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    if (selected) {
-        Button(onClick = onClick) {
-            Text(text = filter.label)
-        }
-    } else {
-        TextButton(onClick = onClick) {
-            Text(text = filter.label)
-        }
-    }
+@OptIn(ExperimentalMaterial3Api::class)
+private fun FastChargerFilterChip(selected: Boolean, onClick: () -> Unit) {
+    FilterChip(
+        onClick = onClick,
+        label = {
+            Text("Fast charge")
+        },
+        selected = selected,
+        leadingIcon = if (selected) {
+            {
+                Icon(
+                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = null,
+                )
+            }
+        } else {
+            null
+        },
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
