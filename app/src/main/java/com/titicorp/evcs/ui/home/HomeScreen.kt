@@ -467,34 +467,54 @@ private fun ChargerFilterBottomSheet(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             items(chargers) {
-                Column(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clickable(
-                            onClick = {
-                                onChargerClick(it)
-                                scope.launch {
-                                    sheetState.hide()
-                                    onDismissRequest()
-                                }
-                            },
-                            interactionSource = MutableInteractionSource(),
-                            indication = rememberRipple(),
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.CenterVertically),
-                ) {
-                    if (it != null) {
-                        Icon(
-                            modifier = Modifier.size(34.dp),
-                            painter = painterResource(id = it.icon),
-                            contentDescription = null,
-                        )
-                    }
-                    Text(text = it?.name ?: "Any", style = MaterialTheme.typography.labelMedium)
-                }
+                ChargerItem(
+                    charger = it,
+                    onClick = {
+                        onChargerClick(it)
+                        scope.launch {
+                            sheetState.hide()
+                            onDismissRequest()
+                        }
+                    },
+                )
             }
         }
+    }
+}
+
+@Composable
+fun ChargerItem(
+    charger: Charger?,
+    onClick: () -> Unit,
+    selected: Boolean = false,
+) {
+    val color = if (selected) Color.White else Color.Black
+    val backgroundColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
+    Column(
+        modifier = Modifier
+            .size(80.dp)
+            .background(backgroundColor)
+            .clickable(
+                onClick = onClick,
+                interactionSource = MutableInteractionSource(),
+                indication = rememberRipple(),
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp, alignment = Alignment.CenterVertically),
+    ) {
+        if (charger != null) {
+            Icon(
+                modifier = Modifier.size(34.dp),
+                painter = painterResource(id = charger.icon),
+                contentDescription = null,
+                tint = color,
+            )
+        }
+        Text(
+            text = charger?.name ?: "Any",
+            style = MaterialTheme.typography.labelMedium,
+            color = color,
+        )
     }
 }
 
