@@ -1,10 +1,10 @@
 # Description
-Gaming and chatting application within restaurant customers and people closeby.
+Ev Charging station searcha and reservation application.
 # Features
- - Gaming
- - Chatting
- - Sending gifts
- - Buying coins
+- Search fo ev stations
+- Check if they have your charger
+- Book the charging station
+- etc
 # Screenshots
 |||||
 |--- | ---| --- | ---|
